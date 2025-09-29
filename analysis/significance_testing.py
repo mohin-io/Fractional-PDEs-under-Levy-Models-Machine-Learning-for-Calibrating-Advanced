@@ -6,6 +6,8 @@ from sklearn.preprocessing import StandardScaler
 from models.calibration_net.model import build_mlp_model
 from scipy import stats
 import os
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 # --- Configuration ---
 FEATURES_FILE = 'data/processed/features.parquet'
@@ -65,6 +67,33 @@ def run_significance_testing():
     print("\nError Distribution (Mean and Std Dev):")
     for i, param_name in enumerate(targets_df.columns):
         print(f"  {param_name}: Mean Error = {np.mean(errors[:, i]):.4f}, Std Dev Error = {np.std(errors[:, i]):.4f}")
+
+    print("\n--- Visualizing Error Distributions ---")
+
+    param_names = targets_df.columns.tolist()
+
+    plt.figure(figsize=(15, 5 * len(param_names)))
+    for i, param_name in enumerate(param_names):
+        # Histogram of Errors
+        plt.subplot(len(param_names), 2, 2*i + 1)
+        sns.histplot(errors[:, i], kde=True, bins=50)
+        plt.title(f'Histogram of Errors for {param_name}')
+        plt.xlabel(f'Error in {param_name}')
+        plt.ylabel('Frequency')
+        plt.grid(True)
+
+        # Q-Q Plot of Errors
+        plt.subplot(len(param_names), 2, 2*i + 2)
+        stats.probplot(errors[:, i], dist="norm", plot=plt)
+        plt.title(f'Q-Q Plot of Errors for {param_name}')
+        plt.grid(True)
+    plt.tight_layout()
+    plt.show()
+
+    print("\n--- Interpretation of Error Distribution Plots ---")
+    print("The histograms of errors show the frequency distribution of prediction errors for each parameter. Ideally, these should be centered around zero and resemble a normal (bell-shaped) distribution, indicating unbiased predictions.")
+    print("The Q-Q (Quantile-Quantile) plots compare the distribution of errors against a theoretical normal distribution. If the errors are normally distributed, the points should fall approximately along the 45-degree red line. Deviations from this line suggest non-normality, which could imply issues like heteroscedasticity or a biased model.")
+    print("Both plots help in visually assessing the quality and statistical properties of the model's errors, which is crucial for understanding its reliability.")
 
     # Further tests could include:
     # - Comparing errors of our ML model against a benchmark model (e.g., traditional optimization)

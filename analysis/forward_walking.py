@@ -5,6 +5,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from models.calibration_net.model import build_mlp_model
 import os
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 # --- Configuration ---
 FEATURES_FILE = 'data/processed/features.parquet'
@@ -84,6 +86,33 @@ def run_forward_walking_validation(n_splits=5):
     print("\n--- Forward-Walking Validation Summary ---")
     print(f"Average Loss (MSE) across folds: {np.mean(all_loss_scores):.4f} (+/- {np.std(all_loss_scores):.4f})")
     print(f"Average MAE across folds: {np.mean(all_mae_scores):.4f} (+/- {np.std(all_mae_scores):.4f})")
+
+    print("\n--- Visualizing Forward-Walking Results ---")
+
+    folds = np.arange(1, n_splits + 1)
+
+    plt.figure(figsize=(12, 5))
+
+    plt.subplot(1, 2, 1)
+    sns.lineplot(x=folds, y=all_loss_scores, marker='o')
+    plt.title('Loss (MSE) Across Forward-Walking Folds')
+    plt.xlabel('Fold Number')
+    plt.ylabel('Loss (MSE)')
+    plt.grid(True)
+
+    plt.subplot(1, 2, 2)
+    sns.lineplot(x=folds, y=all_mae_scores, marker='o')
+    plt.title('MAE Across Forward-Walking Folds')
+    plt.xlabel('Fold Number')
+    plt.ylabel('Mean Absolute Error (MAE)')
+    plt.grid(True)
+
+    plt.tight_layout()
+    plt.show()
+
+    print("\n--- Interpretation of Forward-Walking Plots ---")
+    print("These plots show the model's performance (Loss and MAE) as it's evaluated on progressively later, unseen data segments. In a truly time-series context, this helps assess the model's stability and adaptability over time.")
+    print("A stable model would show consistent performance across folds, without significant degradation. Increasing errors might indicate concept drift or that the model is not adapting well to new market conditions.")
 
 if __name__ == '__main__':
     run_forward_walking_validation()
