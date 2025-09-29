@@ -1,0 +1,6 @@
+# Ignore node_modules and other common files
+node_modules/
+.env
+.DS_Store
+*.log
+npm-debug.log*

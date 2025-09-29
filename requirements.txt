@@ -1,0 +1,24 @@
+# Core Libraries
+numpy
+pandas
+scipy
+scikit-learn
+
+# ML/Deep Learning
+tensorflow  # Or pytorch
+tensorflow-probability # for Bayesian extension
+
+# API & Web
+fastapi
+uvicorn
+
+# Pricing & Data
+py_vollib  # For Black-Scholes reference
+pyarrow   # For Parquet file format
+
+# Plotting & Analysis
+matplotlib
+jupyterlab
+
+# Testing
+pytest
