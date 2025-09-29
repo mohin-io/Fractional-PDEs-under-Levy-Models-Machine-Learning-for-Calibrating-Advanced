@@ -8,13 +8,14 @@ tfb = tfp.bijectors
 # This file will contain the implementation of Bayesian calibration
 # using Markov Chain Monte Carlo (MCMC) or Variational Inference.
 
+
 def run_bayesian_calibration(
     option_surface_data,
     market_strikes,
     market_maturities,
     initial_params,
     num_results=1000,
-    num_burnin_steps=500
+    num_burnin_steps=500,
 ):
     """
     Placeholder function for running Bayesian calibration using MCMC.
@@ -31,14 +32,17 @@ def run_bayesian_calibration(
         tfp.mcmc.Posterior: Posterior distribution of model parameters.
     """
     print("Bayesian calibration implementation will go here.")
-    print("This will involve defining a probabilistic model, a likelihood function, and running an MCMC sampler.")
+    print(
+        "This will involve defining a probabilistic model, a likelihood function, and running an MCMC sampler."
+    )
     print("For example, using tfp.mcmc.HamiltonianMonteCarlo.")
 
     # Placeholder for actual implementation
     # In a real scenario, this would return the posterior samples of the parameters.
     return None
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     # Example Usage (placeholder)
     # This part will be filled once the actual implementation is done.
     print("Example usage for Bayesian calibration will be added here.")

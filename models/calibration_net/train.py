@@ -8,10 +8,11 @@ import tensorflow as tf
 import joblib
 
 # --- Configuration ---
-FEATURES_FILE = 'data/processed/features.parquet'
-TARGETS_FILE = 'data/processed/targets.parquet'
-MODEL_SAVE_PATH = 'models/calibration_net/mlp_calibration_model.h5'
-SCALER_SAVE_PATH = 'models/calibration_net/scaler_X.pkl'
+FEATURES_FILE = "data/processed/features.parquet"
+TARGETS_FILE = "data/processed/targets.parquet"
+MODEL_SAVE_PATH = "models/calibration_net/mlp_calibration_model.h5"
+SCALER_SAVE_PATH = "models/calibration_net/scaler_X.pkl"
+
 
 def train_model():
     """
@@ -43,11 +44,12 @@ def train_model():
 
     print("Training model...")
     history = model.fit(
-        X_train, y_train,
-        epochs=50, # Can be increased for better performance
+        X_train,
+        y_train,
+        epochs=50,  # Can be increased for better performance
         batch_size=32,
         validation_split=0.1,
-        verbose=1
+        verbose=1,
     )
 
     # Evaluate the model
@@ -63,5 +65,6 @@ def train_model():
     joblib.dump(scaler_X, SCALER_SAVE_PATH)
     print(f"Scaler saved to {SCALER_SAVE_PATH}")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     train_model()

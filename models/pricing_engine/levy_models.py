@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def variance_gamma_char_func(u, t, r, sigma, nu, theta):
     """
     Characteristic function for the Variance Gamma (VG) process.
@@ -21,6 +22,7 @@ def variance_gamma_char_func(u, t, r, sigma, nu, theta):
     )
     return np.exp(exponent)
 
+
 def cgmy_char_func(u, t, r, C, G, M, Y):
     """
     Characteristic function for the CGMY process.
@@ -40,16 +42,15 @@ def cgmy_char_func(u, t, r, C, G, M, Y):
     if Y >= 2:
         raise ValueError("Parameter Y for CGMY model must be less than 2.")
 
-    omega = C * (
-        (G - 1)**Y - G**Y + (M + 1)**Y - M**Y
-    ) / Y
-    
+    omega = C * ((G - 1) ** Y - G**Y + (M + 1) ** Y - M**Y) / Y
+
     exponent = 1j * u * (r + omega) * t + t * C * (
-        (M**Y - (M + 1j * u)**Y) / Y + (G**Y - (G - 1j * u)**Y) / Y
+        (M**Y - (M + 1j * u) ** Y) / Y + (G**Y - (G - 1j * u) ** Y) / Y
     )
     return np.exp(exponent)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     # Example Usage for Variance Gamma
     u_val = np.array([0.5, 1.0])
     t_val = 1.0

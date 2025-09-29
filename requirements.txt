@@ -19,6 +19,7 @@ pyarrow   # For Parquet file format
 # Plotting & Analysis
 matplotlib
 jupyterlab
+seaborn
 
 # Testing
 pytest
