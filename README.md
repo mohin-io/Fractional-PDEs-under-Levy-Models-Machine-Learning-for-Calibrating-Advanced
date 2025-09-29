@@ -1,4 +1,10 @@
-# Levy Model Calibration Engine
+# <p align="center">📈 Levy Model Calibration Engine 📉</p>
+
+<p align="center">
+  <i>Machine Learning for Calibrating Advanced Asset Pricing Models to Market Data</i>
+</p>
+
+
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python Version](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/downloads/)

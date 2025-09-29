@@ -14,6 +14,7 @@ create the training data.
 """
 import pandas as pd
 import numpy as np
+from scipy.stats import qmc
 from scipy.stats.qmc import Sobol
 import os
 
@@ -62,7 +63,7 @@ def generate_dataset():
 
     # 2. Generate scaled parameter samples
     unit_samples = sobol_sampler.random(n=NUM_SAMPLES)
-    param_samples = sobol_sampler.scale(unit_samples, param_lower_bounds, param_upper_bounds)
+    param_samples = qmc.scale(unit_samples, param_lower_bounds, param_upper_bounds)
 
     results = []
     surface_feature_names = [f'price_{i}_{j}' for i in range(len(GRID_STRIKES)) for j in range(len(GRID_MATURITIES))]

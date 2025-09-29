@@ -1,63 +1,74 @@
-"""
-Module for defining the characteristic functions of various Lévy models.
-
-Each class represents a specific model and provides a method to compute its
-characteristic function, which is essential for Fourier-based pricing.
-"""
 import numpy as np
 
-class VarianceGamma:
+def variance_gamma_char_func(u, t, r, sigma, nu, theta):
     """
-    Implements the characteristic function for the Variance Gamma (VG) model.
+    Characteristic function for the Variance Gamma (VG) process.
 
-    The VG model is defined by three parameters:
-    - sigma: Volatility of the underlying Brownian motion.
-    - nu: Variance rate of the gamma process. Controls kurtosis (fat tails).
-           A small nu leads to fatter tails.
-    - theta: Drift of the Brownian motion. Controls skewness.
-             A negative theta leads to a left-skewed distribution (negative skew).
+    Args:
+        u (float or np.ndarray): Argument for the characteristic function.
+        t (float): Time to maturity.
+        r (float): Risk-free rate.
+        sigma (float): Volatility parameter.
+        nu (float): Variance of the gamma subordinator (controls kurtosis).
+        theta (float): Drift parameter (controls skewness).
+
+    Returns:
+        complex or np.ndarray: Value of the characteristic function.
     """
-    def __init__(self, sigma: float, nu: float, theta: float):
-        """
-        Initializes the Variance Gamma model with its parameters.
-        """
-        if nu <= 0:
-            raise ValueError("Parameter 'nu' must be positive.")
-        if sigma <= 0:
-            raise ValueError("Parameter 'sigma' must be positive.")
+    omega = (1 / nu) * np.log(1 - theta * nu - 0.5 * sigma**2 * nu)
+    exponent = 1j * u * (r + omega) * t + (t / nu) * np.log(
+        1 - 1j * u * theta * nu + 0.5 * u**2 * sigma**2 * nu
+    )
+    return np.exp(exponent)
 
-        self.sigma = sigma
-        self.nu = nu
-        self.theta = theta
+def cgmy_char_func(u, t, r, C, G, M, Y):
+    """
+    Characteristic function for the CGMY process.
 
-    def characteristic_function(self, u: np.ndarray, t: float) -> np.ndarray:
-        """
-        Calculates the characteristic function of the VG process.
+    Args:
+        u (float or np.ndarray): Argument for the characteristic function.
+        t (float): Time to maturity.
+        r (float): Risk-free rate.
+        C (float): Parameter controlling the overall activity of jumps.
+        G (float): Parameter controlling the right tail of the jump distribution.
+        M (float): Parameter controlling the left tail of the jump distribution.
+        Y (float): Parameter controlling the fine structure of jumps (Y < 2).
 
-        The formula is given by:
-        phi(u, t) = (1 - i*u*theta*nu + 0.5*sigma^2*u^2*nu)^(-t/nu)
+    Returns:
+        complex or np.ndarray: Value of the characteristic function.
+    """
+    if Y >= 2:
+        raise ValueError("Parameter Y for CGMY model must be less than 2.")
 
-        Args:
-            u: A numpy array of points in the Fourier domain where the function is evaluated.
-            t: The time horizon in years.
+    omega = C * (
+        (G - 1)**Y - G**Y + (M + 1)**Y - M**Y
+    ) / Y
+    
+    exponent = 1j * u * (r + omega) * t + t * C * (
+        (M**Y - (M + 1j * u)**Y) / Y + (G**Y - (G - 1j * u)**Y) / Y
+    )
+    return np.exp(exponent)
 
-        Returns:
-            A numpy array of complex numbers representing the characteristic function values.
-        """
-        # Use 1j for the imaginary unit in Python
-        i = 1j
+if __name__ == '__main__':
+    # Example Usage for Variance Gamma
+    u_val = np.array([0.5, 1.0])
+    t_val = 1.0
+    r_val = 0.05
+    sigma_val = 0.2
+    nu_val = 0.5
+    theta_val = -0.1
 
-        # The term inside the power
-        inner_term = 1 - i * u * self.theta * self.nu + 0.5 * self.sigma**2 * u**2 * self.nu
+    vg_cf = variance_gamma_char_func(u_val, t_val, r_val, sigma_val, nu_val, theta_val)
+    print(f"Variance Gamma Characteristic Function: {vg_cf}")
 
-        # The characteristic function
-        phi = inner_term**(-t / self.nu)
+    # Example Usage for CGMY
+    u_val = np.array([0.5, 1.0])
+    t_val = 1.0
+    r_val = 0.05
+    C_val = 0.1
+    G_val = 5.0
+    M_val = 5.0
+    Y_val = 0.8
 
-        return phi
-
-# Future extensions can be added here as new classes:
-# class CGMY:
-#     ...
-#
-# class MertonJumpDiffusion:
-#     ...
+    cgmy_cf = cgmy_char_func(u_val, t_val, r_val, C_val, G_val, M_val, Y_val)
+    print(f"CGMY Characteristic Function: {cgmy_cf}")

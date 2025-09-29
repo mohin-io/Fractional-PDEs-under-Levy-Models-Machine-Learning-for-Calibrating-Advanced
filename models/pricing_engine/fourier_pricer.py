@@ -1,108 +1,106 @@
-"""
-Module for pricing European options using Fourier methods, specifically the
-Carr-Madan algorithm with Fast Fourier Transform (FFT).
-"""
 import numpy as np
-from scipy.interpolate import interp1d
+from scipy.integrate import quad
+from scipy.fft import fft, ifft
 
-# Import the model definitions
-from models.pricing_engine.levy_models import VarianceGamma
+# Import the characteristic functions
+from models.pricing_engine.levy_models import variance_gamma_char_func, cgmy_char_func
 
-def price_european_call_fft(model, s0: float, k: float, t: float, r: float) -> float:
+def carr_madan_pricer(
+    S0, K, T, r, char_func, alpha=1.5, N=2**10, eta=0.25
+):
     """
-    Prices a European call option using the FFT-based Carr-Madan method.
+    Prices a European call option using the Carr-Madan FFT method.
 
     Args:
-        model: An instance of a Lévy model class (e.g., VarianceGamma).
-        s0: Initial stock price.
-        k: Strike price.
-        t: Time to maturity in years.
-        r: Risk-free interest rate (annualized).
+        S0 (float): Spot price.
+        K (float or np.ndarray): Strike price(s).
+        T (float): Time to maturity.
+        r (float): Risk-free rate.
+        char_func (callable): Characteristic function of the log-price process.
+                              It should accept (u, T, r, *model_params).
+        alpha (float): Damping factor for the characteristic function.
+                       Typically between 1 and 2.
+        N (int): Number of points in the FFT. Must be a power of 2.
+        eta (float): Step size for the integration.
 
     Returns:
-        The price of the European call option.
+        float or np.ndarray: Call option price(s).
     """
-    # FFT parameters
-    N = 2**14  # Number of points, should be a power of 2
-    alpha = 1.5  # Dampening factor for integrability
+    # Ensure K is an array for vectorized operations
+    K = np.atleast_1d(K)
+
+    # Parameters for the FFT
+    lambda_ = 2 * np.pi / (N * eta)
+    b = N * lambda_ / 2
+    v = np.arange(N) * eta
+    k = -b + np.arange(N) * lambda_
+
+    # Evaluate the damped characteristic function
+    psi = char_func(v - 1j * alpha, T, r)
     
-    # Grid spacing in Fourier domain (eta)
-    eta = 0.1
-    # Grid spacing in log-strike domain (lambda)
-    lambda_ = (2 * np.pi) / (N * eta)
+    # Compute the integrand
+    integrand = np.exp(-r * T) * psi / (alpha**2 + alpha - v**2 + 1j * v * (2 * alpha + 1))
 
-    # Create the grid for the log-strike k
-    # The grid is centered around log(s0)
-    k_u = np.arange(N) * lambda_ - (N * lambda_) / 2
+    # Apply FFT
+    fft_result = np.real(ifft(integrand * np.exp(-1j * b * v))) * N
 
-    # Create the grid for the Fourier domain u
-    u = np.arange(N) * eta
+    # Interpolate or select the relevant FFT results for the given strikes
+    # This is a simplified interpolation. For production, a more robust interpolation
+    # or direct mapping to k values matching log(K/S0) would be needed.
+    log_K_S0 = np.log(K / S0)
+    call_prices = np.interp(log_K_S0, k, fft_result) * S0
 
-    # --- Compute the modified characteristic function ---
-    # We need to evaluate the characteristic function of the log-price process.
-    # Let X_t be the Lévy process. The log-price is S_t = s0 * exp(r*t + X_t).
-    # The characteristic function of log(S_t) is phi_log_S(u) = exp(i*u*(log(s0)+r*t)) * phi_X(u)
-    # However, the Carr-Madan formula uses a modified, dampened characteristic function.
-    
-    # Characteristic function of the Lévy process X_t
-    phi_X = model.characteristic_function(u - (alpha + 1) * 1j, t)
-    
-    # The term to be transformed
-    # This is the Fourier transform of the dampened call price
-    psi = np.exp(-r * t) * phi_X / ((alpha + 1j * u) * (alpha + 1 + 1j * u))
+    return call_prices
 
-    # --- Perform the FFT ---
-    fft_result = np.fft.fft(psi) * eta
-
-    # --- Calculate the call prices from the FFT result ---
-    # The result of the FFT needs to be scaled and shifted
-    call_prices_on_grid = (np.exp(-alpha * k_u) / np.pi) * np.real(fft_result)
-
-    # --- Interpolate to find the price for the desired strike k ---
-    # The strikes corresponding to our grid of call prices
-    strike_grid = s0 * np.exp(k_u)
-
-    # Use linear interpolation to find the price at the specific strike k
-    # We use fill_value='extrapolate' to handle strikes outside the grid, though
-    # a well-chosen grid should avoid this.
-    interpolator = interp1d(strike_grid, call_prices_on_grid, kind='linear', fill_value="extrapolate")
-    
-    call_price = interpolator(k)
-
-    return float(call_price)
-
-def price_surface(params: dict, model_name: str, s0: float, grid_strikes: np.ndarray, grid_maturities: np.ndarray, r: float) -> np.ndarray:
+def price_surface(params, model_name, s0, grid_strikes, grid_maturities, r):
     """
-    Prices a full surface of options for given grids of strikes and maturities.
-
-    This is a convenience wrapper around the core FFT pricer to be used for
-    generating the synthetic dataset.
+    Prices a surface of European call options for a given model and parameters.
 
     Args:
-        params: Dictionary of parameters for the specified model.
-        model_name: The name of the model to use (e.g., 'VarianceGamma').
-        s0: Initial stock price.
-        grid_strikes: A numpy array of strike prices.
-        grid_maturities: A numpy array of maturities in years.
-        r: Risk-free interest rate.
+        params (dict): Dictionary of model parameters.
+        model_name (str): Name of the Levy model ('VarianceGamma' or 'CGMY').
+        s0 (float): Spot price.
+        grid_strikes (np.ndarray): Array of strike prices.
+        grid_maturities (np.ndarray): Array of maturities.
+        r (float): Risk-free rate.
 
     Returns:
-        A 2D numpy array where rows correspond to strikes and columns to maturities.
+        np.ndarray: 2D array of call option prices (strikes x maturities).
     """
-    if model_name == 'VarianceGamma':
-        model = VarianceGamma(**params)
-    else:
-        raise NotImplementedError(f"Model '{model_name}' is not implemented.")
-
     price_matrix = np.zeros((len(grid_strikes), len(grid_maturities)))
 
-    for j, t in enumerate(grid_maturities):
-        # For each maturity, we can price all strikes in a vectorized way if the
-        # pricer is adapted, but for clarity, we loop here.
-        # The core FFT pricer already gives us prices on a grid, so a more
-        # efficient implementation would compute the FFT once per maturity.
-        # For this implementation, we call the pricer for each strike.
-        for i, k in enumerate(grid_strikes):
-            price_matrix[i, j] = price_european_call_fft(model, s0, k, t, r)
+    for i, T in enumerate(grid_maturities):
+        if model_name == 'VarianceGamma':
+            char_func_t = lambda u, t, r: variance_gamma_char_func(
+                u, t, r, params['sigma'], params['nu'], params['theta']
+            )
+        elif model_name == 'CGMY':
+            char_func_t = lambda u, t, r: cgmy_char_func(
+                u, t, r, params['C'], params['G'], params['M'], params['Y']
+            )
+        else:
+            raise ValueError(f"Unknown model name: {model_name}")
+
+        # Price options for the current maturity
+        call_prices_for_T = carr_madan_pricer(S0=s0, K=grid_strikes, T=T, r=r, char_func=char_func_t)
+        price_matrix[:, i] = call_prices_for_T
 
     return price_matrix
+
+if __name__ == '__main__':
+    # Example Usage for Variance Gamma
+    S0_val = 100.0
+    r_val = 0.05
+    strikes = np.array([90, 100, 110])
+    maturities = np.array([0.5, 1.0])
+
+    vg_params = {'sigma': 0.2, 'nu': 0.5, 'theta': -0.1}
+    vg_surface = price_surface(vg_params, 'VarianceGamma', S0_val, strikes, maturities, r_val)
+    print("Variance Gamma Option Surface:")
+    print(vg_surface)
+
+    # Example Usage for CGMY
+    cgmy_params = {'C': 0.1, 'G': 5.0, 'M': 5.0, 'Y': 0.8}
+    cgmy_surface = price_surface(cgmy_params, 'CGMY', S0_val, strikes, maturities, r_val)
+    print("\nCGMY Option Surface:")
+    print(cgmy_surface)
