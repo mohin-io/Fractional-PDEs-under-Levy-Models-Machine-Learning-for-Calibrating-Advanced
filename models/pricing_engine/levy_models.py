@@ -17,7 +17,7 @@ def variance_gamma_char_func(u, t, r, sigma, nu, theta):
         complex or np.ndarray: Value of the characteristic function.
     """
     omega = (1 / nu) * np.log(1 - theta * nu - 0.5 * sigma**2 * nu)
-    exponent = 1j * u * (r + omega) * t + (t / nu) * np.log(
+    exponent = 1j * u * (r + omega) * t - (t / nu) * np.log(
         1 - 1j * u * theta * nu + 0.5 * u**2 * sigma**2 * nu
     )
     return np.exp(exponent)
