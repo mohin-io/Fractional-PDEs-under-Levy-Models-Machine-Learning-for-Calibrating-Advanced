@@ -145,11 +145,26 @@ Option Surface → Trained Model (Inverse Problem) → Lévy Parameters
   - Inference speed benchmarking
   - Robustness testing with noise injection
 
+**Bayesian Calibration** ([models/bayesian_calibration/](models/bayesian_calibration/))
+- `mcmc.py`: Full Bayesian inference using TensorFlow Probability NUTS
+  - **BayesianCalibrator** class with multi-chain MCMC
+  - Informative priors: LogNormal(σ), Gamma(ν), Normal(θ)
+  - Posterior summaries, credible intervals
+  - CLI: `--model`, `--samples`, `--burnin`, `--chains`
+- `uncertainty_propagation.py`: Uncertainty quantification
+  - Prediction intervals for single options
+  - Surface-wide uncertainty
+  - Coverage probability testing
+- `diagnostics.py`: Convergence diagnostics
+  - R-hat, ESS, MCSE computation
+  - Trace plots, posterior distributions, correlations
+  - Full report generation
+
 ### Directory Structure
 
 - `models/pricing_engine/`: Lévy models and Fourier-based option pricing (forward problem)
 - `models/calibration_net/`: Neural network for parameter calibration (inverse problem)
-- `models/bayesian_calibration/`: MCMC-based Bayesian calibration alternative
+- `models/bayesian_calibration/`: MCMC-based Bayesian calibration with uncertainty quantification
 - `data/synthetic/`: Generated training data from pricing engine
 - `data/processed/`: Features and targets ready for ML training
 - `features/`: Feature engineering scripts

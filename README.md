@@ -109,7 +109,7 @@ python models/bayesian_calibration/mcmc.py --samples 5000
 
 ---
 
-## 🆕 Recent Updates (Phase 1 & 2 Completed)
+## 🆕 Recent Updates (Phases 1, 2, & 3 Completed)
 
 ### Phase 1: Enhanced Pricing Engine ✅
 - **Improved Carr-Madan Pricer**: CubicSpline interpolation, higher FFT resolution (N=2^12)
@@ -125,6 +125,21 @@ python models/bayesian_calibration/mcmc.py --samples 5000
 - **Ensemble Framework**: Combine multiple models (averaging, weighted, stacking)
 - **Model Comparison**: Comprehensive benchmarking framework
 - **Optimized Training**: TensorFlow Dataset API, mixed precision support
+
+### Phase 3: Bayesian Calibration & Uncertainty Quantification ✅
+- **MCMC Calibration**: Full Bayesian inference using No-U-Turn Sampler (NUTS)
+  - Informative priors based on financial domain knowledge
+  - Multi-chain sampling for convergence diagnosis
+  - Posterior distributions (not just point estimates)
+- **Uncertainty Propagation**: Quantify parameter uncertainty impact on option prices
+  - Prediction intervals for single options
+  - Surface-wide uncertainty quantification
+  - Coverage probability testing
+- **Convergence Diagnostics**: R-hat, ESS, MCSE
+  - Trace plots for visual inspection
+  - Posterior distributions with HDI intervals
+  - Parameter correlation analysis (corner plots)
+- **CLI Interface**: Full command-line control for MCMC parameters
 
 ### Architecture Comparison
 
