@@ -1,12 +1,11 @@
 """
-Script to generate synthetic Variance Gamma dataset for training.
+Script to generate synthetic CGMY dataset for training.
 
-The Variance Gamma (VG) model is a pure-jump Lévy process that captures skewness
-and excess kurtosis in asset returns, making it superior to Black-Scholes for
-modeling real market option prices.
+The CGMY (Carr-Geman-Madan-Yor) model is a generalization of the Variance Gamma
+model with more flexible control over jump activity via the Y parameter.
 
 This script generates training data by:
-1. Sampling VG parameters (sigma, nu, theta) uniformly using Sobol sequences
+1. Sampling CGMY parameters (C, G, M, Y) uniformly using Sobol sequences
 2. Pricing option surfaces via Fourier methods
 3. Saving (surface, params) pairs for ML training
 """
@@ -17,11 +16,16 @@ from models.dataset_utils import generate_synthetic_dataset, save_dataset
 
 # --- Configuration ---
 
-# Variance Gamma parameter ranges
+# CGMY parameter ranges
+# C: overall activity level of jumps
+# G: rate of exponential decay of right tail (positive jumps)
+# M: rate of exponential decay of left tail (negative jumps)
+# Y: controls fine structure (Y < 2 required for finite variation)
 PARAM_RANGES = {
-    "sigma": [0.1, 0.6],   # Volatility of Brownian motion
-    "nu": [0.1, 1.0],      # Variance rate of gamma process (controls kurtosis)
-    "theta": [-0.5, 0.0],  # Drift parameter (controls skewness, often negative)
+    "C": [0.01, 0.5],   # Jump activity
+    "G": [1.0, 10.0],   # Right tail decay
+    "M": [1.0, 10.0],   # Left tail decay
+    "Y": [0.1, 1.8],    # Fine structure (must be < 2)
 }
 
 # Fixed parameters for pricing grid
@@ -29,36 +33,35 @@ S0 = 100.0  # Spot price
 R = 0.05    # Risk-free rate
 Q = 0.0     # Dividend yield
 
-# The fixed grid for the option surface (features for the ML model)
-# This grid MUST match the one used in feature engineering and inference
-GRID_STRIKES = np.linspace(80, 120, 20)      # 20 strikes (80% to 120% moneyness)
-GRID_MATURITIES = np.linspace(0.1, 2.0, 10)  # 10 maturities (1 month to 2 years)
+# Option grid (must match VG dataset for consistency)
+GRID_STRIKES = np.linspace(80, 120, 20)      # 20 strikes
+GRID_MATURITIES = np.linspace(0.1, 2.0, 10)  # 10 maturities
 
 # Default dataset size
-NUM_SAMPLES = 100_000  # Use smaller for quick tests, 1M+ for production
+NUM_SAMPLES = 100_000
 
 # Output configuration
 OUTPUT_DIR = "data/synthetic"
-OUTPUT_FILE = "training_data.parquet"
+OUTPUT_FILE = "cgmy_training_data.parquet"
 
 
 def main(num_samples=NUM_SAMPLES, add_noise=False, noise_level=0.005):
     """
-    Generate Variance Gamma synthetic dataset.
+    Generate CGMY synthetic dataset.
 
     Args:
         num_samples (int): Number of samples to generate.
         add_noise (bool): Whether to add market microstructure noise.
         noise_level (float): Noise magnitude (percentage).
     """
-    print(f"Generating Variance Gamma dataset with {num_samples:,} samples...")
+    print(f"Generating CGMY dataset with {num_samples:,} samples...")
     print(f"Parameter ranges: {PARAM_RANGES}")
     print(f"Grid: {len(GRID_STRIKES)} strikes × {len(GRID_MATURITIES)} maturities")
     print(f"Market noise: {'Enabled' if add_noise else 'Disabled'}")
 
     # Generate dataset
     df = generate_synthetic_dataset(
-        model_name="VarianceGamma",
+        model_name="CGMY",
         param_ranges=PARAM_RANGES,
         num_samples=num_samples,
         grid_strikes=GRID_STRIKES,
@@ -95,7 +98,7 @@ def main(num_samples=NUM_SAMPLES, add_noise=False, noise_level=0.005):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Generate Variance Gamma synthetic dataset")
+    parser = argparse.ArgumentParser(description="Generate CGMY synthetic dataset")
     parser.add_argument('--num_samples', type=int, default=NUM_SAMPLES,
                        help=f'Number of samples to generate (default: {NUM_SAMPLES:,})')
     parser.add_argument('--add_noise', action='store_true',
