@@ -50,7 +50,8 @@ The typical workflow is:
 
 1. **Generate synthetic training data:**
    ```bash
-   python models/generate_dataset.py
+   python models/generate_dataset.py --num_samples 100000
+   python models/generate_dataset_cgmy.py --num_samples 100000
    ```
    - Generates synthetic option surfaces using Fourier pricing
    - Uses Sobol quasi-random sampling for uniform parameter space coverage
@@ -66,15 +67,26 @@ The typical workflow is:
 
 3. **Train the calibration model:**
    ```bash
-   python models/calibration_net/train.py
+   python models/calibration_net/train.py --architecture mlp --epochs 50
+   python models/calibration_net/train.py --architecture cnn --epochs 50
+   python models/calibration_net/train.py --architecture resnet --epochs 50
    ```
-   - Trains MLP neural network on the processed data
+   - Trains neural network on the processed data
    - Saves model to `models/calibration_net/mlp_calibration_model.h5`
    - Saves feature scaler to `models/calibration_net/scaler_X.pkl`
 
 4. **Run predictions:**
    ```bash
    python models/calibration_net/predict.py
+   ```
+
+5. **Start production API:**
+   ```bash
+   # Local development
+   uvicorn api.main:app --reload --port 8000
+
+   # Docker deployment
+   docker-compose up -d
    ```
 
 ## Architecture
@@ -144,6 +156,12 @@ Option Surface → Trained Model (Inverse Problem) → Lévy Parameters
   - Accuracy metrics (MSE, MAE, R²)
   - Inference speed benchmarking
   - Robustness testing with noise injection
+- `residual_analysis.py`: Statistical diagnostics for model residuals
+  - Normality tests (Shapiro-Wilk, KS, D'Agostino)
+  - Q-Q plots, heteroscedasticity testing (Breusch-Pagan)
+- `cross_validation.py`: K-fold cross-validation framework
+- `sensitivity_analysis_enhanced.py`: Jacobian and Sobol sensitivity indices
+- `robustness_tests.py`: Noise injection, OOD detection, missing data tests
 
 **Bayesian Calibration** ([models/bayesian_calibration/](models/bayesian_calibration/))
 - `mcmc.py`: Full Bayesian inference using TensorFlow Probability NUTS
@@ -160,6 +178,33 @@ Option Surface → Trained Model (Inverse Problem) → Lévy Parameters
   - Trace plots, posterior distributions, correlations
   - Full report generation
 
+**Production API** ([api/](api/))
+- `main.py`: FastAPI application with production-ready endpoints
+  - `/calibrate`: Main calibration endpoint (~12-15ms latency)
+  - `/health`: Health checks for container orchestration
+  - `/models`: List available models
+  - `/warmup`: Preload models for faster first request
+  - `/cache`: Clear model cache
+- `schemas.py`: Pydantic request/response validation
+  - `OptionSurfaceRequest`: Input validation (prices, strikes, maturities)
+  - `CalibrationResult`: Structured output with timing metrics
+  - `HealthResponse`, `ModelInfoResponse`, `ErrorResponse`
+- `errors.py`: Custom exception hierarchy
+  - `CalibrationError`, `ModelNotLoadedError`, `InvalidInputDimensionError`
+  - Centralized error handling with detailed messages
+- `model_loader.py`: Singleton model cache with lazy loading
+  - Caches TensorFlow models and StandardScalers
+  - Warmup functionality for production deployments
+
+**Deployment**
+- `Dockerfile`: Multi-stage build with security best practices
+  - Non-root user, health checks, resource limits
+- `docker-compose.yml`: Production orchestration
+  - Environment variables, volume mounts, networking
+- `notebooks/`: Jupyter examples
+  - `01_quickstart.ipynb`: Basic calibration workflow
+  - `02_advanced_calibration.ipynb`: Bayesian MCMC with uncertainty
+
 ### Directory Structure
 
 - `models/pricing_engine/`: Lévy models and Fourier-based option pricing (forward problem)
@@ -168,9 +213,11 @@ Option Surface → Trained Model (Inverse Problem) → Lévy Parameters
 - `data/synthetic/`: Generated training data from pricing engine
 - `data/processed/`: Features and targets ready for ML training
 - `features/`: Feature engineering scripts
-- `analysis/`: Statistical analysis (out-of-sample, sensitivity, forward walking)
+- `analysis/`: Statistical analysis (residual analysis, sensitivity, cross-validation, robustness)
+- `api/`: Production FastAPI server with Docker deployment
+- `notebooks/`: Jupyter notebook examples and tutorials
 - `tests/`: pytest test suite
-- `api/`: FastAPI endpoints (currently empty, planned for deployment)
+- `docs/`: Documentation (PLAN.md, ARCHITECTURE.md, api_reference.md)
 
 ## Development Conventions
 

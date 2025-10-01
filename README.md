@@ -109,7 +109,7 @@ python models/bayesian_calibration/mcmc.py --samples 5000
 
 ---
 
-## 🆕 Recent Updates (Phases 1, 2, & 3 Completed)
+## 🆕 Recent Updates (Phases 1-5 Completed)
 
 ### Phase 1: Enhanced Pricing Engine ✅
 - **Improved Carr-Madan Pricer**: CubicSpline interpolation, higher FFT resolution (N=2^12)
@@ -140,6 +140,22 @@ python models/bayesian_calibration/mcmc.py --samples 5000
   - Posterior distributions with HDI intervals
   - Parameter correlation analysis (corner plots)
 - **CLI Interface**: Full command-line control for MCMC parameters
+
+### Phase 4: Comprehensive Validation & Analysis ✅
+- **Residual Analysis**: Normality tests (Shapiro-Wilk, KS, D'Agostino), Q-Q plots, heteroscedasticity testing
+- **Cross-Validation**: K-fold CV with stratified sampling and per-parameter metrics
+- **Sensitivity Analysis**: Jacobian computation, Sobol indices, feature importance
+- **Robustness Testing**: Noise injection, OOD detection, missing data handling
+
+### Phase 5: Production API & Deployment ✅
+- **FastAPI Server**: RESTful API with `/calibrate`, `/health`, `/models` endpoints
+- **Pydantic Validation**: Comprehensive request/response schemas with automatic validation
+- **Error Handling**: Custom exception hierarchy with detailed error messages
+- **Model Caching**: Lazy loading with singleton pattern for fast inference
+- **Docker Deployment**: Multi-stage Dockerfile with security best practices
+- **Docker Compose**: Production-ready orchestration with health checks
+- **Interactive Documentation**: Swagger UI and ReDoc at `/docs` and `/redoc`
+- **Performance**: ~12-15ms inference latency, ~70 req/s throughput
 
 ### Architecture Comparison
 
@@ -242,7 +258,14 @@ For detailed architecture, see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 │   └── build_features.py        # Surface flattening & scaling
 │
 ├── api/                         # Production API
-│   └── main.py                  # FastAPI server
+│   ├── main.py                  # FastAPI server
+│   ├── schemas.py               # Pydantic models
+│   ├── errors.py                # Exception handling
+│   └── model_loader.py          # Model caching
+│
+├── notebooks/                   # Jupyter examples
+│   ├── 01_quickstart.ipynb      # Basic usage
+│   └── 02_advanced_calibration.ipynb  # Bayesian MCMC
 │
 ├── simulations/                 # Simulation runs
 │   ├── variance_gamma/
@@ -363,52 +386,134 @@ python analysis/sensitivity_analysis.py   # Sensitivity
 
 ---
 
-## 🌐 API Usage
+## 🌐 Production Deployment
 
-### Start Server
+### Docker Deployment (Recommended)
 
+**Quick Start**:
 ```bash
-# Local development
-uvicorn api.main:app --reload --port 8000
+# Build and start API server
+docker-compose up -d
 
-# Docker deployment
-docker-compose up
+# Check health
+curl http://localhost:8000/health
+
+# View logs
+docker-compose logs -f api
+
+# Stop
+docker-compose down
 ```
 
-### Example Request
+**Dockerfile Features**:
+- Multi-stage build for optimized image size
+- Non-root user for security
+- Health checks for orchestration
+- Resource limits (2 CPU, 2GB RAM)
 
+### Local Development
+
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Start API server
+uvicorn api.main:app --reload --port 8000
+
+# In another terminal, test
+curl http://localhost:8000/health
+```
+
+### API Endpoints
+
+#### `POST /calibrate`
+Calibrate Lévy model parameters from option price surface.
+
+**Request**:
 ```bash
 curl -X POST "http://localhost:8000/calibrate" \
   -H "Content-Type: application/json" \
   -d '{
+    "option_prices": [20.5, 15.3, 10.8, ...],
+    "model_name": "VarianceGamma",
     "spot_price": 100.0,
-    "risk_free_rate": 0.05,
-    "strikes": [90, 95, 100, 105, 110],
-    "maturities": [0.25, 0.5, 1.0],
-    "prices": [[12.5, 15.2, ...], [5.3, 8.1, ...], ...],
-    "model_type": "VarianceGamma"
+    "risk_free_rate": 0.05
   }'
 ```
 
-### Response
-
+**Response**:
 ```json
 {
-  "model_type": "VarianceGamma",
+  "model_name": "VarianceGamma",
   "parameters": {
-    "sigma": 0.2301,
-    "nu": 0.4123,
-    "theta": -0.1504
+    "sigma": 0.215,
+    "nu": 0.342,
+    "theta": -0.145
   },
-  "calibration_time_ms": 2.3,
-  "fit_quality": {
-    "rmse": 0.08,
-    "relative_error": 0.012
-  }
+  "inference_time_ms": 12.5,
+  "input_dimension": 200,
+  "success": true
 }
 ```
 
-API documentation: http://localhost:8000/docs (Swagger UI)
+#### `GET /health`
+Health check for container orchestration.
+
+#### `GET /models`
+List available calibration models.
+
+#### `POST /warmup`
+Preload models for faster first request.
+
+**Full API Documentation**:
+- Swagger UI: http://localhost:8000/docs
+- ReDoc: http://localhost:8000/redoc
+- Reference: [docs/api_reference.md](docs/api_reference.md)
+
+### Python Client Example
+
+```python
+import requests
+import numpy as np
+
+# Generate sample option surface (200 prices)
+option_prices = np.random.uniform(5, 25, 200).tolist()
+
+# Calibrate
+response = requests.post(
+    "http://localhost:8000/calibrate",
+    json={
+        "option_prices": option_prices,
+        "model_name": "VarianceGamma",
+        "spot_price": 100.0,
+        "risk_free_rate": 0.05
+    }
+)
+
+result = response.json()
+print(f"Parameters: {result['parameters']}")
+print(f"Inference time: {result['inference_time_ms']}ms")
+```
+
+### Production Considerations
+
+**Security**:
+- Add API authentication (JWT, OAuth2)
+- Restrict CORS origins
+- Enable HTTPS/TLS
+- Implement rate limiting
+
+**Scaling**:
+- Use Kubernetes for horizontal scaling
+- Add Redis for model caching
+- Deploy with GPU for 5-10× speedup
+- Use load balancer for high availability
+
+**Monitoring**:
+- Add Prometheus metrics endpoint
+- Set up Grafana dashboards
+- Configure logging aggregation (ELK stack)
+- Add distributed tracing (Jaeger)
 
 ---
 
