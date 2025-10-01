@@ -519,11 +519,13 @@ print(f"Inference time: {result['inference_time_ms']}ms")
 
 ## 📚 Documentation
 
+- **[📊 VISUALIZATION_GALLERY.md](VISUALIZATION_GALLERY.md)**: Complete gallery with 10 publication-quality figures
 - **[PLAN.md](docs/PLAN.md)**: Step-by-step build plan (6 phases, 18-24 days)
 - **[ARCHITECTURE.md](docs/ARCHITECTURE.md)**: System design & component details
+- **[API Reference](docs/api_reference.md)**: Complete REST API documentation
+- **[Project Completion Summary](docs/PROJECT_COMPLETION_SUMMARY.md)**: Phase-by-phase breakdown
 - **[CLAUDE.md](CLAUDE.md)**: AI assistant context for future development
-- **[project_report.md](docs/project_report.md)**: Academic-style report
-- **[guideline.md](docs/guideline.md)**: Development guidelines
+- **[Jupyter Notebooks](notebooks/)**: Interactive tutorials (quickstart + Bayesian MCMC)
 
 ---
 
