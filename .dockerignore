@@ -1,0 +1,67 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+*.egg-info/
+dist/
+build/
+
+# Data files (too large for container)
+data/
+simulations/
+outputs/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Tests
+tests/
+pytest_cache/
+.coverage
+htmlcov/
+
+# Documentation
+docs/
+*.md
+!README.md
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+
+# Environment
+.env
+.env.local
+
+# Temporary files
+*.log
+*.tmp
+temp/
+
+# Features and analysis (not needed for API)
+features/
+analysis/
+
+# Notebooks
+notebooks/
+
+# Examples
+examples/
