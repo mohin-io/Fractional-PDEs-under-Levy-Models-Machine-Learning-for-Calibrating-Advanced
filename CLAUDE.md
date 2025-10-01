@@ -98,19 +98,39 @@ Option Surface → Trained Model (Inverse Problem) → Lévy Parameters
 - These define the stochastic processes used in option pricing
 
 **Fourier Pricing** ([models/pricing_engine/fourier_pricer.py](models/pricing_engine/fourier_pricer.py))
-- `carr_madan_pricer()`: FFT-based European option pricing using characteristic functions
+- `carr_madan_pricer()`: Enhanced FFT-based European option pricing
+  - CubicSpline interpolation for improved accuracy
+  - Supports both call and put options via put-call parity
+  - Dividend yield (q) parameter support
+  - Increased FFT resolution (N=2^12, eta=0.1)
+- `compute_greeks()`: Greeks computation via finite differences (Delta, Gamma, Theta, Rho)
 - `price_surface()`: Generates full option price surface across strikes and maturities
 - Solves the "forward problem": parameters → prices
 
 **Calibration Network** ([models/calibration_net/](models/calibration_net/))
-- `model.py`: MLP architecture (256→128→64 neurons with dropout)
-- `train.py`: Training pipeline with StandardScaler preprocessing
+- `model.py`: Enhanced MLP with batch normalization and L2 regularization
+  - Configurable architecture (default: 256→128→64)
+  - `get_callbacks()` for early stopping, LR scheduling, checkpointing
+- `architectures.py`: Advanced model architectures
+  - **CNN**: Treats option surface as 2D image with Conv2D layers
+  - **ResNet**: Residual blocks with skip connections for deep networks
+  - **CalibrationEnsemble**: Combines multiple models (averaging, weighted, stacking)
+- `train.py`: Optimized training pipeline
+  - TensorFlow Dataset API with prefetching
+  - Mixed precision training support
+  - CLI arguments for architecture selection
+  - Saves training history to JSON
 - `predict.py`: Inference for parameter estimation
 - Solves the "inverse problem": prices → parameters
 
-**Data Generation** ([models/generate_dataset.py](models/generate_dataset.py))
-- Uses Sobol sequences for quasi-random sampling of parameter space
-- Prices options via Fourier methods to create (surface, params) pairs
+**Data Generation**
+- [models/generate_dataset.py](models/generate_dataset.py): Variance Gamma dataset
+- [models/generate_dataset_cgmy.py](models/generate_dataset_cgmy.py): CGMY dataset
+- [models/dataset_utils.py](models/dataset_utils.py): Shared utilities
+  - `generate_sobol_samples()`: Quasi-random parameter sampling
+  - `add_market_noise()`: Simulates bid-ask spreads and measurement noise
+  - `generate_synthetic_dataset()`: Unified dataset creation
+- CLI arguments: `--num_samples`, `--add_noise`, `--noise_level`
 - Fixed grid: 20 strikes (80-120), 10 maturities (0.1-2.0 years)
 - The grid dimensions MUST match between data generation and feature engineering
 
@@ -118,6 +138,12 @@ Option Surface → Trained Model (Inverse Problem) → Lévy Parameters
 - Splits synthetic data into features (flattened price surfaces) and targets (model parameters)
 - Features are columns matching `price_*` pattern
 - Targets are model parameters: sigma, nu, theta (VG) or C, G, M, Y (CGMY)
+
+**Model Analysis** ([analysis/](analysis/))
+- `model_comparison.py`: Compare MLP, CNN, ResNet, Ensemble
+  - Accuracy metrics (MSE, MAE, R²)
+  - Inference speed benchmarking
+  - Robustness testing with noise injection
 
 ### Directory Structure
 

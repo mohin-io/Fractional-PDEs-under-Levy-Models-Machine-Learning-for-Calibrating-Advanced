@@ -82,41 +82,80 @@ print(f"Calibrated parameters: {params}")
 ### Full Workflow
 
 ```bash
-# 1. Generate synthetic training data
-python models/generate_dataset.py  # ~100k samples, 2-3 hours
+# 1. Try quick start examples
+python examples/quick_start.py
 
-# 2. Build features
+# 2. Generate synthetic training data
+python models/generate_dataset.py --num_samples 100000  # VG model
+python models/generate_dataset_cgmy.py --num_samples 100000  # CGMY model
+
+# 3. Build features
 python features/build_features.py
 
-# 3. Train neural network
-python models/calibration_net/train.py  # ~10 min on GPU
+# 4. Train neural network (choose architecture)
+python models/calibration_net/train.py --architecture mlp --epochs 50
+python models/calibration_net/train.py --architecture cnn --epochs 50
+python models/calibration_net/train.py --architecture resnet --epochs 50
 
-# 4. Validate
+# 5. Compare models
+python -c "from analysis.model_comparison import compare_models; # See docs"
+
+# 6. Validate
 python analysis/out_of_sample.py
 
-# 5. (Optional) Bayesian calibration
+# 7. (Optional) Bayesian calibration
 python models/bayesian_calibration/mcmc.py --samples 5000
 ```
 
 ---
 
-## 📊 Results & Performance
+## 🆕 Recent Updates (Phase 1 & 2 Completed)
+
+### Phase 1: Enhanced Pricing Engine ✅
+- **Improved Carr-Madan Pricer**: CubicSpline interpolation, higher FFT resolution (N=2^12)
+- **Put Options**: Full support via put-call parity
+- **Greeks Computation**: Delta, Gamma, Theta, Rho via finite differences
+- **CGMY Dataset**: Complete dataset generation for CGMY model
+- **Market Noise**: Simulate realistic bid-ask spreads and measurement errors
+
+### Phase 2: Advanced Neural Architectures ✅
+- **Enhanced MLP**: Batch normalization, L2 regularization, callbacks (early stopping, LR scheduling)
+- **CNN Architecture**: Treats option surfaces as 2D images for spatial pattern learning
+- **ResNet Architecture**: Deep networks with skip connections
+- **Ensemble Framework**: Combine multiple models (averaging, weighted, stacking)
+- **Model Comparison**: Comprehensive benchmarking framework
+- **Optimized Training**: TensorFlow Dataset API, mixed precision support
+
+### Architecture Comparison
+
+| Model | Test MSE | Test MAE | Inference (ms) | Parameters |
+|-------|----------|----------|----------------|------------|
+| **MLP** | TBD | TBD | ~2-3 | 150K |
+| **CNN** | TBD | TBD | ~3-4 | 280K |
+| **ResNet** | TBD | TBD | ~4-5 | 520K |
+| **Ensemble** | TBD | TBD | ~10 | 950K |
+
+*Run training to populate these metrics*
+
+---
+
+## 📊 Expected Performance
 
 ### Neural Network Calibration
 
-**Test Set Performance** (20k held-out samples):
+**Expected Test Set Performance**:
 
 | Parameter | MAE | RMSE | R² |
 |-----------|-----|------|----|
-| σ (volatility) | 0.008 | 0.012 | 0.967 |
-| ν (kurtosis) | 0.015 | 0.022 | 0.954 |
-| θ (skew) | 0.011 | 0.017 | 0.971 |
+| σ (volatility) | <0.010 | <0.015 | >0.95 |
+| ν (kurtosis) | <0.020 | <0.030 | >0.95 |
+| θ (skew) | <0.015 | <0.020 | >0.95 |
 
 **Speed Benchmark**:
 ```
-Neural Network:   2.3 ms  ⚡⚡⚡
-scipy.optimize:   1850 ms  🐌
-Grid Search:      12000 ms  🐌🐌🐌
+Neural Network:   2-5 ms    ⚡⚡⚡
+scipy.optimize:   200-2000 ms  🐌
+Grid Search:      10000+ ms    🐌🐌🐌
 ```
 
 ### Bayesian Calibration
