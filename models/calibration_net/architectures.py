@@ -1,16 +1,31 @@
 """
-Advanced neural network architectures for Lévy model calibration.
+Advanced Neural Network Architectures for Lévy Model Calibration
 
-This module provides various deep learning architectures beyond the baseline MLP:
-- CNN: Convolutional Neural Network treating option surfaces as 2D images
-- ResNet: Residual Network with skip connections for deep architectures
-- Ensemble: Combining multiple models for improved robustness
+This module implements state-of-the-art deep learning architectures for the
+inverse problem of parameter calibration from option price surfaces.
+
+Architectures:
+1. CNN (Convolutional Neural Network): Treats option surfaces as 2D images
+2. Transformer: Self-attention mechanism for importance weighting
+3. ResNet: Deep residual networks with skip connections
+4. Ensemble: Combines multiple models for robustness
+
+Mathematical Problem:
+Given option price surface P(K,T), find parameters θ such that:
+    P_market(K,T) ≈ P_model(K,T; θ)
+
+This is an ill-posed inverse problem solved via supervised learning.
+
+Author: Mohin Hasin (mohinhasin999@gmail.com)
+Project: Fractional PDEs under Lévy Models
+Repository: https://github.com/mohin-io/Fractional-PDEs-under-Levy-Models-Machine-Learning-for-Calibrating-Advanced
 """
 
 import numpy as np
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
+from typing import List, Optional, Dict, Tuple
 
 
 def build_cnn_model(input_shape, output_dim, num_strikes=20, num_maturities=10,
@@ -155,6 +170,111 @@ def build_resnet_model(input_shape, output_dim, num_blocks=3, filters_list=[256,
     return model
 
 
+def build_transformer_model(input_shape, output_dim, d_model=256, num_heads=8,
+                           num_blocks=4, ff_dim=1024, dropout=0.1, learning_rate=0.001):
+    """
+    Build Transformer model with multi-head self-attention.
+
+    The Transformer architecture allows the model to focus on the most
+    important strikes and maturities for parameter estimation through
+    the attention mechanism.
+
+    Architecture:
+        Input (n_features,)
+        → Embedding(d_model)
+        → Positional Encoding
+        → [Transformer Block (Multi-Head Attention + FFN)] × num_blocks
+        → Global Average Pooling
+        → Dense(256) → Dense(128) → Dense(output_dim)
+
+    Args:
+        input_shape (tuple): Input shape (flattened surface)
+        output_dim (int): Number of parameters to predict
+        d_model (int): Embedding dimension (default: 256)
+        num_heads (int): Number of attention heads (default: 8)
+        num_blocks (int): Number of transformer blocks (default: 4)
+        ff_dim (int): Feed-forward dimension (default: 1024)
+        dropout (float): Dropout rate (default: 0.1)
+        learning_rate (float): Learning rate (default: 0.001)
+
+    Returns:
+        keras.Model: Compiled Transformer model
+    """
+    inputs = layers.Input(shape=input_shape)
+
+    # Embedding to d_model dimension
+    x = layers.Dense(d_model)(inputs)
+    x = layers.Reshape((-1, d_model))(x)  # (batch, seq_len, d_model)
+
+    # Add positional encoding
+    seq_len = input_shape[0]
+    pos_encoding = _get_positional_encoding(seq_len, d_model)
+    x = x + pos_encoding
+
+    # Transformer blocks
+    for i in range(num_blocks):
+        # Multi-head attention
+        attn_output = layers.MultiHeadAttention(
+            num_heads=num_heads,
+            key_dim=d_model // num_heads,
+            dropout=dropout,
+            name=f'mha_{i}'
+        )(x, x)
+        attn_output = layers.Dropout(dropout)(attn_output)
+        x = layers.LayerNormalization(epsilon=1e-6)(x + attn_output)
+
+        # Feed-forward network
+        ffn_output = tf.keras.Sequential([
+            layers.Dense(ff_dim, activation='relu'),
+            layers.Dropout(dropout),
+            layers.Dense(d_model)
+        ], name=f'ffn_{i}')(x)
+        x = layers.LayerNormalization(epsilon=1e-6)(x + ffn_output)
+
+    # Global pooling and output
+    x = layers.GlobalAveragePooling1D()(x)
+    x = layers.Dense(256, activation='relu')(x)
+    x = layers.Dropout(0.2)(x)
+    x = layers.Dense(128, activation='relu')(x)
+    x = layers.Dropout(0.1)(x)
+    outputs = layers.Dense(output_dim, activation='linear')(x)
+
+    model = keras.Model(inputs=inputs, outputs=outputs, name='Transformer_Calibrator')
+
+    optimizer = keras.optimizers.Adam(learning_rate=learning_rate)
+    model.compile(optimizer=optimizer, loss='mse', metrics=['mae'])
+
+    return model
+
+
+def _get_positional_encoding(seq_len: int, d_model: int) -> tf.Tensor:
+    """
+    Generate sinusoidal positional encoding for Transformer.
+
+    PE(pos, 2i) = sin(pos / 10000^(2i/d_model))
+    PE(pos, 2i+1) = cos(pos / 10000^(2i/d_model))
+
+    Args:
+        seq_len: Sequence length
+        d_model: Embedding dimension
+
+    Returns:
+        Positional encoding tensor of shape (1, seq_len, d_model)
+    """
+    positions = np.arange(seq_len)[:, np.newaxis]
+    dims = np.arange(d_model)[np.newaxis, :]
+
+    angle_rates = 1 / np.power(10000, (2 * (dims // 2)) / d_model)
+    angle_rads = positions * angle_rates
+
+    # Apply sin to even indices, cos to odd indices
+    pos_encoding = np.zeros((seq_len, d_model))
+    pos_encoding[:, 0::2] = np.sin(angle_rads[:, 0::2])
+    pos_encoding[:, 1::2] = np.cos(angle_rads[:, 1::2])
+
+    return tf.cast(pos_encoding[np.newaxis, ...], dtype=tf.float32)
+
+
 class CalibrationEnsemble:
     """
     Ensemble of multiple calibration models for improved robustness.
@@ -269,19 +389,47 @@ class CalibrationEnsemble:
 
 if __name__ == "__main__":
     # Example usage
+    print("=" * 70)
+    print("Advanced Calibration Architectures - Examples")
+    print("=" * 70)
+
     input_dim = 200  # 20 strikes × 10 maturities
     output_dim = 3   # sigma, nu, theta
 
-    print("Building CNN model...")
-    cnn_model = build_cnn_model((input_dim,), output_dim)
-    cnn_model.summary()
+    print("\n1. CNN Model")
+    print("-" * 70)
+    cnn_model = build_cnn_model((input_dim,), output_dim, num_strikes=20, num_maturities=10)
+    print(f"Built: {cnn_model.name}")
+    print(f"Parameters: {cnn_model.count_params():,}")
 
-    print("\nBuilding ResNet model...")
-    resnet_model = build_resnet_model((input_dim,), output_dim)
-    resnet_model.summary()
+    print("\n2. Transformer Model")
+    print("-" * 70)
+    transformer_model = build_transformer_model((input_dim,), output_dim, d_model=256, num_heads=8)
+    print(f"Built: {transformer_model.name}")
+    print(f"Parameters: {transformer_model.count_params():,}")
 
-    print("\nCreating ensemble...")
+    print("\n3. ResNet Model")
+    print("-" * 70)
+    resnet_model = build_resnet_model((input_dim,), output_dim, filters_list=[256, 128, 64])
+    print(f"Built: {resnet_model.name}")
+    print(f"Parameters: {resnet_model.count_params():,}")
+
+    print("\n4. Ensemble")
+    print("-" * 70)
     ensemble = CalibrationEnsemble(aggregation='average')
     ensemble.add_model(cnn_model)
+    ensemble.add_model(transformer_model)
     ensemble.add_model(resnet_model)
     print(f"Ensemble contains {len(ensemble.models)} models")
+    print(f"Aggregation method: {ensemble.aggregation}")
+
+    # Test prediction
+    print("\n5. Test Predictions")
+    print("-" * 70)
+    X_test = np.random.randn(5, input_dim)
+    ensemble_pred = ensemble.predict(X_test)
+    print(f"Input shape: {X_test.shape}")
+    print(f"Output shape: {ensemble_pred.shape}")
+    print(f"Sample predictions:\n{ensemble_pred}")
+
+    print("\n" + "=" * 70)
