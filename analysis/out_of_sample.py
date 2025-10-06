@@ -1,12 +1,26 @@
+"""
+Enhanced out-of-sample validation with comprehensive residual analysis.
+
+This module provides rigorous validation of calibration models including:
+- Residual diagnostics (Q-Q plots, normality tests)
+- Per-parameter R² and error metrics
+- Residual autocorrelation analysis
+- Visual diagnostics
+"""
+
 import pandas as pd
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras import losses, metrics
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import r2_score, mean_absolute_error, mean_squared_error
+from scipy import stats
 import os
 import matplotlib.pyplot as plt
 import seaborn as sns
+import joblib
+import argparse
 
 from models.calibration_net.model import build_mlp_model
 
@@ -14,6 +28,7 @@ from models.calibration_net.model import build_mlp_model
 FEATURES_FILE = "data/processed/features.parquet"
 TARGETS_FILE = "data/processed/targets.parquet"
 MODEL_PATH = "models/calibration_net/mlp_calibration_model.h5"
+SCALER_PATH = "models/calibration_net/scaler_X.pkl"
 
 
 def run_out_of_sample_validation():
