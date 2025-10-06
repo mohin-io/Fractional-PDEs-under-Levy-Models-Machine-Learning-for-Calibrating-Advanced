@@ -1,14 +1,26 @@
-# 📈 Lévy Model Calibration Engine
+# 🚀 Fractional PDEs under Lévy Models
+## Machine Learning for Calibrating Advanced Asset Pricing Models
 
 <p align="center">
-  <b>Machine Learning for Calibrating Advanced Asset Pricing Models to Market Data</b>
+  <b>AI-Powered Calibration Engine for Real-World Derivatives Pricing | 1000x Faster | Full Uncertainty Quantification</b>
 </p>
 
 <p align="center">
-  <a href="#"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"/></a>
+  <a href="https://github.com/mohin-io/Fractional-PDEs-under-Levy-Models-Machine-Learning-for-Calibrating-Advanced"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"/></a>
   <a href="#"><img src="https://img.shields.io/badge/python-3.9%2B-blue.svg" alt="Python 3.9+"/></a>
-  <a href="#"><img src="https://img.shields.io/badge/TensorFlow-2.12%2B-orange.svg" alt="TensorFlow"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/TensorFlow-2.15%2B-orange.svg" alt="TensorFlow 2.15+"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/TensorFlow--Probability-0.23%2B-red.svg" alt="TFP"/></a>
   <a href="#"><img src="https://img.shields.io/badge/code%20style-black-000000.svg" alt="Code style: black"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/FastAPI-0.104%2B-009688.svg" alt="FastAPI"/></a>
+</p>
+
+<p align="center">
+  <a href="#-quick-start">Quick Start</a> •
+  <a href="#-key-features">Features</a> •
+  <a href="#-architecture">Architecture</a> •
+  <a href="#-documentation">Documentation</a> •
+  <a href="#-production-deployment">Deployment</a> •
+  <a href="#-for-recruiters">For Recruiters</a>
 </p>
 
 ---
@@ -48,8 +60,8 @@
 
 ```bash
 # Clone the repository
-git clone https://github.com/mohin-io/levy-model-calibration.git
-cd levy-model-calibration
+git clone https://github.com/mohin-io/Fractional-PDEs-under-Levy-Models-Machine-Learning-for-Calibrating-Advanced.git
+cd Fractional-PDEs-under-Levy-Models-Machine-Learning-for-Calibrating-Advanced
 
 # Create virtual environment
 python -m venv venv
@@ -686,7 +698,7 @@ Distributed under the MIT License. See [LICENSE](LICENSE) for more information.
 - GitHub: [@mohin-io](https://github.com/mohin-io)
 - LinkedIn: [linkedin.com/in/mohinhasin](https://linkedin.com/in/mohinhasin) *(replace with actual link)*
 
-**Project Link**: [https://github.com/mohin-io/levy-model-calibration](https://github.com/mohin-io/levy-model-calibration)
+**Project Link**: [https://github.com/mohin-io/Fractional-PDEs-under-Levy-Models-Machine-Learning-for-Calibrating-Advanced](https://github.com/mohin-io/Fractional-PDEs-under-Levy-Models-Machine-Learning-for-Calibrating-Advanced)
 
 ---
 

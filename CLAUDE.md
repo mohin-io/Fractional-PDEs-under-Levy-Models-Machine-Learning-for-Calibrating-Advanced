@@ -2,9 +2,15 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Project Name
+
+**Fractional PDEs under Lévy Models: Machine Learning for Calibrating Advanced Asset Pricing Models**
+
+Repository: https://github.com/mohin-io/Fractional-PDEs-under-Levy-Models-Machine-Learning-for-Calibrating-Advanced
+
 ## Overview
 
-This is a machine learning framework for calibrating Lévy-based stochastic models (Variance Gamma, CGMY) in quantitative finance using deep learning. The system learns to map option price surfaces to model parameters, enabling near-instantaneous calibration compared to traditional optimization methods.
+This is a next-generation machine learning framework for calibrating Lévy-based stochastic models (Variance Gamma, CGMY, NIG) in quantitative finance using deep learning and Bayesian methods. The system learns to map option price surfaces to model parameters, enabling near-instantaneous calibration (1000x faster) compared to traditional optimization methods with full uncertainty quantification.
 
 ## Key Commands
 
