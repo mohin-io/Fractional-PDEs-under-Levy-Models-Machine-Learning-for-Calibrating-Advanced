@@ -11,7 +11,11 @@
       "Bash(gh repo edit:*)",
       "Bash(python:*)",
       "Bash(git config:*)",
-      "Bash(git remote set-url:*)"
+      "Bash(git remote set-url:*)",
+      "Bash(if [ -f \"c:\\Users\\ACER\\Levy Model\\docs\\ARCHITECTURE.md\" ])",
+      "Bash(then echo \"exists\")",
+      "Bash(else echo \"not exists\")",
+      "Bash(fi)"
     ],
     "deny": [],
     "ask": []
