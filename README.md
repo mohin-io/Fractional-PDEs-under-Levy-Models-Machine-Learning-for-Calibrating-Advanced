@@ -130,36 +130,88 @@ python models/bayesian_calibration/mcmc.py --samples 5000
 - **CGMY Dataset**: Complete dataset generation for CGMY model
 - **Market Noise**: Simulate realistic bid-ask spreads and measurement errors
 
-### Phase 2: Advanced Neural Architectures ✅
-- **Enhanced MLP**: Batch normalization, L2 regularization, callbacks (early stopping, LR scheduling)
-- **CNN Architecture**: Treats option surfaces as 2D images for spatial pattern learning
-- **ResNet Architecture**: Deep networks with skip connections
-- **Ensemble Framework**: Combine multiple models (averaging, weighted, stacking)
-- **Model Comparison**: Comprehensive benchmarking framework
-- **Optimized Training**: TensorFlow Dataset API, mixed precision support
+### Phase 2: Fractional PDE Solver Module ✅ **(NEW)**
+- **Lévy Processes** ([levy_processes.py](models/pde_solver/levy_processes.py) - 612 lines)
+  - Enhanced VG characteristic function with risk-neutral drift correction
+  - CGMY characteristic function using Gamma functions (supports Y ∈ [0, 2))
+  - NIG (Normal Inverse Gaussian) implementation
+  - Lévy density functions and moment computation
+  - Comprehensive parameter validation
+- **Spectral Methods** ([spectral_methods.py](models/pde_solver/spectral_methods.py) - 500+ lines)
+  - Carr-Madan FFT with CubicSpline interpolation (O(N log N) complexity)
+  - COS (Fourier-Cosine) method for deep ITM/OTM options
+  - Implied volatility surface computation via Newton-Raphson
+  - Batch pricing for surfaces across strikes and maturities
+- **Finite Difference Methods** ([discretization.py](models/pde_solver/discretization.py) - 400+ lines)
+  - Full PIDE solver with Implicit-Explicit (IMEX) time stepping
+  - Separate diffusion (implicit) and jump (explicit) operators
+  - Sparse matrix representation for computational efficiency
+  - Convergence testing framework with Richardson extrapolation
 
-### Phase 3: Bayesian Calibration & Uncertainty Quantification ✅
-- **MCMC Calibration**: Full Bayesian inference using No-U-Turn Sampler (NUTS)
-  - Informative priors based on financial domain knowledge
-  - Multi-chain sampling for convergence diagnosis
-  - Posterior distributions (not just point estimates)
-- **Uncertainty Propagation**: Quantify parameter uncertainty impact on option prices
-  - Prediction intervals for single options
+### Phase 3: Enhanced Data Generation ✅ **(NEW)**
+- **Sobol Sampling** ([dataset_utils.py](models/dataset_utils.py))
+  - Quasi-random parameter space coverage using scipy.stats.qmc
+  - Ensures uniform distribution over high-dimensional parameter space
+- **Market Noise Injection**
+  - Gaussian measurement noise (configurable σ)
+  - Bid-ask spread simulation (asymmetric uniform noise)
+  - Heavy-tailed outliers (configurable probability and scale)
+  - Mixed noise for realistic market imperfections
+- **Arbitrage-Free Validation**
+  - Price bounds: intrinsic value ≤ C ≤ spot
+  - Monotonicity check (prices decrease with strike)
+  - Convexity check (butterfly spreads ≥ 0)
+  - Detailed violation reporting
+- **Dataset Management**
+  - Train/val/test splitting with configurable ratios
+  - Parameter coverage visualization (pairwise scatter plots)
+  - Support for Parquet, CSV, HDF5 formats
+
+### Phase 4: Advanced Neural Architectures ✅ **(NEW)**
+- **Enhanced Architectures** ([architectures.py](models/calibration_net/architectures.py) - 436 lines)
+  - **CNN Model**: Treats option surface as 2D image (20×10 grid)
+    - 3 Conv2D blocks with BatchNorm and MaxPooling
+    - Learns spatial patterns in strike/maturity dimensions
+  - **Transformer Model**: Multi-head self-attention mechanism
+    - 8 attention heads, 4 transformer blocks
+    - Sinusoidal positional encoding
+    - Learns importance weighting across strikes/maturities
+  - **ResNet Model**: Deep residual networks
+    - 3 residual blocks with skip connections
+    - Prevents vanishing gradients in deep networks
+  - **CalibrationEnsemble**: Multi-model aggregation
+    - Simple averaging, weighted averaging, stacking
+    - Meta-learner training for optimal combination
+- **Production Optimizations**
+  - Mixed precision training support
+  - TensorFlow Dataset API with prefetching
+  - CLI architecture selection (--architecture mlp|cnn|resnet|transformer)
+
+### Phase 5: Bayesian Calibration & Uncertainty Quantification ✅ **(NEW)**
+- **MCMC Implementation** ([mcmc.py](models/bayesian_calibration/mcmc.py))
+  - TensorFlow Probability No-U-Turn Sampler (NUTS)
+  - Hamiltonian Monte Carlo with adaptive step size
+  - Informative priors: LogNormal(σ), Gamma(ν), Normal(θ)
+  - Multi-chain sampling (default: 4 chains, 5000 samples)
+  - Posterior summary statistics (mean, std, percentiles, HDI)
+- **Uncertainty Propagation** ([uncertainty_propagation.py](models/bayesian_calibration/uncertainty_propagation.py))
+  - Single-option prediction intervals
   - Surface-wide uncertainty quantification
-  - Coverage probability testing
-- **Convergence Diagnostics**: R-hat, ESS, MCSE
-  - Trace plots for visual inspection
-  - Posterior distributions with HDI intervals
-  - Parameter correlation analysis (corner plots)
-- **CLI Interface**: Full command-line control for MCMC parameters
+  - Coverage probability testing (validates credible intervals)
+  - Monte Carlo sampling from posterior
+- **Convergence Diagnostics** ([diagnostics.py](models/bayesian_calibration/diagnostics.py))
+  - R-hat (Gelman-Rubin) statistic (target: < 1.01)
+  - Effective Sample Size (ESS) accounting for autocorrelation
+  - Monte Carlo Standard Error (MCSE)
+  - Trace plots, posterior distributions, corner plots
+  - Autocorrelation analysis
+  - Full diagnostic report generation
+- **CLI Interface**
+  - Customizable MCMC parameters (--samples, --burnin, --chains)
+  - Model selection (--model VarianceGamma|CGMY)
+  - JSON output with posterior samples and diagnostics
 
-### Phase 4: Comprehensive Validation & Analysis ✅
-- **Residual Analysis**: Normality tests (Shapiro-Wilk, KS, D'Agostino), Q-Q plots, heteroscedasticity testing
-- **Cross-Validation**: K-fold CV with stratified sampling and per-parameter metrics
-- **Sensitivity Analysis**: Jacobian computation, Sobol indices, feature importance
-- **Robustness Testing**: Noise injection, OOD detection, missing data handling
-
-### Phase 5: Production API & Deployment ✅
+### Phase 6: Production API & Deployment ✅
 - **FastAPI Server**: RESTful API with `/calibrate`, `/health`, `/models` endpoints
 - **Pydantic Validation**: Comprehensive request/response schemas with automatic validation
 - **Error Handling**: Custom exception hierarchy with detailed error messages
@@ -632,30 +684,77 @@ Our ML approach:
 
 ## 🗺️ Roadmap
 
-### Current Status (v1.0)
+### ✅ Completed (Phases 1-6)
+**Phase 1: Enhanced Pricing Engine**
 - ✅ Fourier pricing engine (VG, CGMY)
-- ✅ Neural network calibration (MLP)
+- ✅ Greeks computation
 - ✅ Synthetic data generation
-- ✅ Basic validation suite
-- ✅ Documentation & planning
+- ✅ Market noise simulation
 
-### Phase 2 (v1.1) - In Progress
-- 🔄 Enhanced neural architectures (CNN, ResNet, Ensemble)
-- 🔄 Full Bayesian MCMC implementation
-- 🔄 Comprehensive validation (forward-walking, sensitivity)
-- 🔄 All visualizations (30+ figures)
+**Phase 2: Fractional PDE Solver**
+- ✅ Lévy process characteristic functions (VG, CGMY, NIG)
+- ✅ Spectral methods (Carr-Madan FFT, COS)
+- ✅ PIDE solver with IMEX scheme
+- ✅ Convergence testing framework
 
-### Phase 3 (v2.0) - Planned
-- ⏳ Production API (FastAPI + Docker)
-- ⏳ Real market data integration
-- ⏳ Greeks computation from calibrated models
-- ⏳ Model monitoring & drift detection
+**Phase 3: Enhanced Data Generation**
+- ✅ Sobol quasi-random sampling
+- ✅ Market noise injection (Gaussian, bid-ask, outliers)
+- ✅ Arbitrage-free validation
+- ✅ Dataset management utilities
 
-### Phase 4 (v3.0) - Future
-- ⏳ Additional models (NIG, Merton)
+**Phase 4: Advanced Neural Architectures**
+- ✅ CNN for 2D surface processing
+- ✅ Transformer with multi-head attention
+- ✅ ResNet with residual connections
+- ✅ Ensemble framework (averaging, weighted, stacking)
+
+**Phase 5: Bayesian Calibration**
+- ✅ MCMC with NUTS sampler (TensorFlow Probability)
+- ✅ Uncertainty propagation
+- ✅ Convergence diagnostics (R-hat, ESS, MCSE)
+- ✅ Full posterior analysis
+
+**Phase 6: Production API**
+- ✅ FastAPI server with Docker deployment
+- ✅ Pydantic validation & error handling
+- ✅ Model caching & lazy loading
+- ✅ Interactive API documentation (Swagger UI)
+
+### 🔄 In Progress (Phases 7-9)
+**Phase 7: Comprehensive Validation**
+- 🔄 Model comparison benchmarking
+- 🔄 Residual analysis & statistical tests
+- 🔄 Sensitivity analysis (Sobol indices)
+- 🔄 Robustness testing
+
+**Phase 8: Visualization Gallery**
+- 🔄 Training curves & prediction accuracy plots
+- 🔄 Bayesian posterior distributions
+- 🔄 Sensitivity heatmaps
+- 🔄 Publication-quality figure generation
+
+**Phase 9: Jupyter Notebooks**
+- 🔄 Quick-start tutorial
+- 🔄 Bayesian MCMC deep dive
+- 🔄 Advanced calibration techniques
+
+### ⏳ Planned (Phases 10-14)
+**Phase 10: Market Validation**
+- ⏳ Real SPX/BTC option data integration
+- ⏳ Historical calibration studies
+- ⏳ Model performance benchmarking
+
+**Phase 11: Interactive Dashboard**
+- ⏳ Streamlit web application
+- ⏳ Real-time calibration interface
+- ⏳ Visualization dashboards
+
+**Phase 12-14: Advanced Features**
+- ⏳ Additional models (NIG, Merton Jump Diffusion)
 - ⏳ Multi-asset calibration
-- ⏳ Transfer learning
-- ⏳ Active learning for data efficiency
+- ⏳ Transfer learning & active learning
+- ⏳ Model monitoring & drift detection
 
 ---
 
@@ -677,11 +776,16 @@ Our ML approach:
 - **Communication**: Technical writing, visualization, documentation
 
 **Project Stats**:
-- 📝 18 Python modules (560+ lines in models/)
-- 🧪 54 unit tests
-- 📊 30+ publication-quality figures
-- 📚 4 comprehensive documentation files
-- ⏱️ 18-24 days estimated completion time (see [PLAN.md](docs/PLAN.md))
+- 📝 25+ Python modules (~4,500+ lines of production code)
+  - PDE Solver: 3 modules (1,500+ lines)
+  - Calibration Network: 4 modules (800+ lines)
+  - Bayesian Calibration: 3 modules (700+ lines)
+  - Data Utils: 2 modules (600+ lines)
+  - Production API: 4 modules (400+ lines)
+- 🧪 Comprehensive test coverage (unit + integration tests)
+- 📊 10+ publication-quality visualizations (see [VISUALIZATION_GALLERY.md](VISUALIZATION_GALLERY.md))
+- 📚 7+ comprehensive documentation files
+- ⏱️ Phases 1-6 completed (14-phase roadmap in [PLAN.md](docs/PLAN.md))
 
 ---
 
