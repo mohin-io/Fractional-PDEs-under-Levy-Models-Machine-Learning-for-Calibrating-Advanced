@@ -20,7 +20,11 @@
       "Bash(mkdir:*)",
       "Bash(iconv:*)",
       "Bash(cat:*)",
-      "Bash(timeout:*)"
+      "Bash(timeout:*)",
+      "Bash(git rm:*)",
+      "Bash(curl:*)",
+      "Bash(taskkill:*)",
+      "Bash(findstr:*)"
     ],
     "deny": [],
     "ask": []
