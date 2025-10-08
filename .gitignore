@@ -61,4 +61,4 @@ data/synthetic/*
 
 # Models
 models/calibration_net/*.h5
-models/calibration_net/*.pt
+models/calibration_net/*.ptoutputs/logs/
