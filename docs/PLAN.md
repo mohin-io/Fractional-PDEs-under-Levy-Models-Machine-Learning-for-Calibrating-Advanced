@@ -189,7 +189,7 @@ def compute_greeks(S0, K, T, r, q, char_func, epsilon=0.01):
 - `outputs/figures/cgmy_implied_vol_surface.png`
 
 #### 1.2 Implement Fractional PDE Solver (Optional Enhancement)
-**File**: `models/pricing_engine/pide_solver.py` (NEW)
+**File**: `models/pricing_engine/pide_solver.py`
 
 **Purpose**: Alternative to Fourier methods using Partial Integro-Differential Equations
 
@@ -280,7 +280,7 @@ Input(200) → Dense(256) → Dropout(0.2) → Dense(128) → Dropout(0.2) → D
 - Track training metrics (loss curves, MAE per parameter)
 
 #### 2.2 Advanced Architectures
-**File**: `models/calibration_net/architectures.py` (NEW)
+**File**: `models/calibration_net/architectures.py`
 
 **1D CNN for Surface Features**:
 ```python
@@ -328,7 +328,7 @@ def build_transformer_calibrator(input_shape, output_dim):
 ```
 
 #### 2.3 Ensemble Methods
-**File**: `models/calibration_net/ensemble.py` (NEW)
+**File**: `models/calibration_net/ensemble.py`
 
 ```python
 class CalibrationEnsemble:
@@ -352,7 +352,7 @@ class CalibrationEnsemble:
 ```
 
 #### 2.4 Model Comparison & Benchmarking
-**File**: `analysis/model_comparison.py` (NEW)
+**File**: `analysis/model_comparison.py`
 
 **Metrics**:
 - **Accuracy**: MSE, MAE, R² per parameter
@@ -467,7 +467,7 @@ class BayesianCalibrator:
 ```
 
 #### 3.2 Variational Inference (Faster Alternative)
-**File**: `models/bayesian_calibration/variational.py` (NEW)
+**File**: `models/bayesian_calibration/variational.py`
 
 **Purpose**: Approximate Bayesian inference for speed
 
@@ -493,7 +493,7 @@ class VariationalCalibrator:
 ```
 
 #### 3.3 Uncertainty Propagation
-**File**: `models/bayesian_calibration/uncertainty_propagation.py` (NEW)
+**File**: `models/bayesian_calibration/uncertainty_propagation.py`
 
 **Goal**: Quantify calibration uncertainty impact on option pricing
 
@@ -704,7 +704,7 @@ def compute_jacobian(model, X_sample):
 - `outputs/figures/sobol_indices.png`: Variance decomposition
 
 #### 4.4 Model Robustness Testing
-**File**: `analysis/robustness_tests.py` (NEW)
+**File**: `analysis/robustness_tests.py`
 
 **Stress Tests**:
 1. **Adversarial Noise**:
@@ -738,7 +738,7 @@ def detect_ood_samples(model, X_test):
 **Goal**: Production-ready REST API with monitoring
 
 #### 5.1 FastAPI Implementation
-**File**: `api/main.py` (NEW)
+**File**: `api/main.py`
 
 ```python
 from fastapi import FastAPI, HTTPException
@@ -907,7 +907,7 @@ services:
 ```
 
 #### 5.3 API Documentation & Testing
-**File**: `api/test_api.py` (NEW)
+**File**: `api/test_api.py`
 
 ```python
 from fastapi.testclient import TestClient
@@ -952,7 +952,7 @@ def test_invalid_input():
 **Goal**: Publication-quality figures and comprehensive README
 
 #### 6.1 Architecture Diagrams
-**File**: `docs/diagrams/architecture.py` (NEW)
+**File**: `docs/diagrams/architecture.py`
 
 Using `diagrams` library:
 
@@ -997,7 +997,7 @@ with Diagram("Lévy Calibration Engine Architecture", show=False,
 - `outputs/figures/ml_workflow.png`
 
 #### 6.2 Results Dashboard
-**File**: `analysis/generate_dashboard.py` (NEW)
+**File**: `analysis/generate_dashboard.py`
 
 ```python
 import plotly.graph_objects as go
@@ -1025,7 +1025,7 @@ def create_results_dashboard(metrics):
 ```
 
 #### 6.3 Performance Comparison Plots
-**File**: `analysis/benchmark_plots.py` (NEW)
+**File**: `analysis/benchmark_plots.py`
 
 **Comparison to Traditional Methods**:
 ```python

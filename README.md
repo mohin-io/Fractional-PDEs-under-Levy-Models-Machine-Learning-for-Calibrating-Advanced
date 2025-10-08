@@ -130,7 +130,7 @@ python models/bayesian_calibration/mcmc.py --samples 5000
 - **CGMY Dataset**: Complete dataset generation for CGMY model
 - **Market Noise**: Simulate realistic bid-ask spreads and measurement errors
 
-### Phase 2: Fractional PDE Solver Module ✅ **(NEW)**
+### Phase 2: Fractional PDE Solver Module ✅
 - **Lévy Processes** ([levy_processes.py](models/pde_solver/levy_processes.py) - 612 lines)
   - Enhanced VG characteristic function with risk-neutral drift correction
   - CGMY characteristic function using Gamma functions (supports Y ∈ [0, 2))
@@ -148,7 +148,7 @@ python models/bayesian_calibration/mcmc.py --samples 5000
   - Sparse matrix representation for computational efficiency
   - Convergence testing framework with Richardson extrapolation
 
-### Phase 3: Enhanced Data Generation ✅ **(NEW)**
+### Phase 3: Enhanced Data Generation ✅
 - **Sobol Sampling** ([dataset_utils.py](models/dataset_utils.py))
   - Quasi-random parameter space coverage using scipy.stats.qmc
   - Ensures uniform distribution over high-dimensional parameter space
@@ -167,7 +167,7 @@ python models/bayesian_calibration/mcmc.py --samples 5000
   - Parameter coverage visualization (pairwise scatter plots)
   - Support for Parquet, CSV, HDF5 formats
 
-### Phase 4: Advanced Neural Architectures ✅ **(NEW)**
+### Phase 4: Advanced Neural Architectures ✅
 - **Enhanced Architectures** ([architectures.py](models/calibration_net/architectures.py) - 436 lines)
   - **CNN Model**: Treats option surface as 2D image (20×10 grid)
     - 3 Conv2D blocks with BatchNorm and MaxPooling
@@ -187,7 +187,7 @@ python models/bayesian_calibration/mcmc.py --samples 5000
   - TensorFlow Dataset API with prefetching
   - CLI architecture selection (--architecture mlp|cnn|resnet|transformer)
 
-### Phase 5: Bayesian Calibration & Uncertainty Quantification ✅ **(NEW)**
+### Phase 5: Bayesian Calibration & Uncertainty Quantification ✅
 - **MCMC Implementation** ([mcmc.py](models/bayesian_calibration/mcmc.py))
   - TensorFlow Probability No-U-Turn Sampler (NUTS)
   - Hamiltonian Monte Carlo with adaptive step size
