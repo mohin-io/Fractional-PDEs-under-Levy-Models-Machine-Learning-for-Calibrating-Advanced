@@ -4,6 +4,7 @@ Model loading and caching utilities.
 
 import os
 import pickle
+import joblib
 import logging
 from typing import Optional, Tuple, Any
 from pathlib import Path
@@ -78,19 +79,38 @@ class ModelCache:
         # Load model
         try:
             logger.info(f"Loading model from: {model_path}")
-            model = tf.keras.models.load_model(str(model_path))
+            # Load without compiling to avoid Keras version issues
+            # Use custom_objects to handle metric deserialization issues
+            custom_objects = {
+                'mse': tf.keras.losses.MeanSquaredError(),
+                'mae': tf.keras.losses.MeanAbsoluteError()
+            }
+            model = tf.keras.models.load_model(str(model_path), compile=False, custom_objects=custom_objects)
             self._models[model_name] = model
             logger.info(f"Model loaded successfully: {model_name}")
             return model
         except Exception as e:
-            raise ModelNotLoadedError(
-                message=f"Failed to load model: {str(e)}",
-                details={
-                    "model_name": model_name,
-                    "path": str(model_path),
-                    "error": str(e)
-                }
-            )
+            logger.error(f"Failed to load model with custom_objects, trying simple load...")
+            # Fallback: try loading weights only
+            try:
+                from models.calibration_net.model import build_mlp_model
+                # Build model architecture
+                model = build_mlp_model(input_dim=200, output_dim=3)
+                # Load weights
+                model.load_weights(str(model_path))
+                self._models[model_name] = model
+                logger.info(f"Model weights loaded successfully: {model_name}")
+                return model
+            except Exception as e2:
+                raise ModelNotLoadedError(
+                    message=f"Failed to load model: {str(e)}",
+                    details={
+                        "model_name": model_name,
+                        "path": str(model_path),
+                        "error": str(e),
+                        "fallback_error": str(e2)
+                    }
+                )
 
     def load_scaler(self, model_name: str = "VarianceGamma") -> Any:
         """
@@ -134,8 +154,7 @@ class ModelCache:
         # Load scaler
         try:
             logger.info(f"Loading scaler from: {scaler_path}")
-            with open(scaler_path, 'rb') as f:
-                scaler = pickle.load(f)
+            scaler = joblib.load(scaler_path)
             self._scalers[model_name] = scaler
             logger.info(f"Scaler loaded successfully: {model_name}")
             return scaler
