@@ -1,0 +1,167 @@
+2025-10-08 02:07:29.683227: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2025-10-08 02:07:32.969295: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2025-10-08 02:07:36.727228: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: SSE3 SSE4.1 SSE4.2 AVX AVX2 AVX512F AVX512_VNNI FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+================================================================================
+RUNNING COMPREHENSIVE ROBUSTNESS TESTS
+================================================================================
+
+1. Loading data...
+2. Loading model and scaler...
+
+3. Testing noise robustness (1000 samples)...
+   Testing gaussian noise...
+Testing robustness to gaussian noise...
+Baseline (clean) - MSE: 0.000438, MAE: 0.017166
+
+  Noise level: 0%
+    MSE: 0.000438 (+0.0%)
+    MAE: 0.017166 (+0.0%)
+
+  Noise level: 1%
+    MSE: 0.000491 (+12.2%)
+    MAE: 0.017777 (+3.6%)
+
+  Noise level: 5%
+    MSE: 0.001828 (+317.4%)
+    MAE: 0.024779 (+44.3%)
+
+  Noise level: 10%
+    MSE: 0.004689 (+970.8%)
+    MAE: 0.035526 (+107.0%)
+
+  Noise level: 20%
+    MSE: 0.011370 (+2496.4%)
+    MAE: 0.054993 (+220.4%)
+   Testing uniform noise...
+Testing robustness to uniform noise...
+Baseline (clean) - MSE: 0.000438, MAE: 0.017166
+
+  Noise level: 0%
+    MSE: 0.000438 (+0.0%)
+    MAE: 0.017166 (+0.0%)
+
+  Noise level: 1%
+    MSE: 0.000466 (+6.4%)
+    MAE: 0.017536 (+2.2%)
+
+  Noise level: 5%
+    MSE: 0.001016 (+132.1%)
+    MAE: 0.021051 (+22.6%)
+
+  Noise level: 10%
+    MSE: 0.001845 (+321.4%)
+    MAE: 0.025800 (+50.3%)
+
+  Noise level: 20%
+    MSE: 0.005235 (+1095.6%)
+    MAE: 0.037571 (+118.9%)
+   Testing salt_pepper noise...
+Testing robustness to salt_pepper noise...
+Baseline (clean) - MSE: 0.000438, MAE: 0.017166
+
+  Noise level: 0%
+    MSE: 0.000438 (+0.0%)
+    MAE: 0.017166 (+0.0%)
+
+  Noise level: 1%
+    MSE: 0.002665 (+508.7%)
+    MAE: 0.024161 (+40.7%)
+
+  Noise level: 5%
+    MSE: 0.010320 (+2256.8%)
+    MAE: 0.049591 (+188.9%)
+
+  Noise level: 10%
+    MSE: 0.018513 (+4127.6%)
+    MAE: 0.068919 (+301.5%)
+
+  Noise level: 20%
+    MSE: 0.032152 (+7242.2%)
+    MAE: 0.098421 (+473.3%)
+   Noise robustness tested.
+   Saved to: outputs/reports/noise_robustness.csv
+
+4. Testing out-of-distribution detection (1000 samples)...
+Traceback (most recent call last):
+  File "C:\Users\ACER\Levy Model\run_robustness_tests.py", line 75, in <module>
+    ood_rate = np.mean(ood_mask)
+  File "C:\Users\ACER\AppData\Local\Programs\Python\Python313\Lib\site-packages\numpy\_core\fromnumeric.py", line 3860, in mean
+    return _methods._mean(a, axis=axis, dtype=dtype,
+           ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                          out=out, **kwargs)
+                          ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ACER\AppData\Local\Programs\Python\Python313\Lib\site-packages\numpy\_core\_methods.py", line 147, in _mean
+    ret = ret / rcount
+          ~~~~^~~~~~~~
+TypeError: unsupported operand type(s) for /: 'dict' and 'int'
+    MSE: 0.005929 (+1253.9%)
+    MAE: 0.039274 (+128.8%)
+   Testing salt_pepper noise...
+Testing robustness to salt_pepper noise...
+Baseline (clean) - MSE: 0.000438, MAE: 0.017166
+
+  Noise level: 0%
+    MSE: 0.000438 (+0.0%)
+    MAE: 0.017166 (+0.0%)
+
+  Noise level: 1%
+    MSE: 0.002505 (+472.1%)
+    MAE: 0.024024 (+39.9%)
+
+  Noise level: 5%
+    MSE: 0.010983 (+2408.0%)
+    MAE: 0.049590 (+188.9%)
+
+  Noise level: 10%
+    MSE: 0.022227 (+4975.9%)
+    MAE: 0.075617 (+340.5%)
+
+  Noise level: 20%
+    MSE: 0.030854 (+6945.9%)
+    MAE: 0.096596 (+462.7%)
+   Noise robustness tested.
+   Saved to: outputs/reports/noise_robustness.csv
+
+4. Testing out-of-distribution detection (1000 samples)...
+   OOD detection: 6.50% of test samples flagged as OOD
+   Saved to: outputs/reports/ood_detection.csv
+
+5. Testing missing data robustness (1000 samples)...
+   Missing data robustness tested.
+   Saved to: outputs/reports/missing_data_robustness.csv
+
+6. Generating robustness visualization...
+Traceback (most recent call last):
+  File "C:\Users\ACER\Levy Model\run_robustness_tests.py", line 109, in <module>
+    plot_robustness_results(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        noise_results, extreme_results=None, missing_results=missing_results,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        param_names=param_names,
+        ^^^^^^^^^^^^^^^^^^^^^^^^
+        save_path='outputs/figures/validation/robustness_tests.png'
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+TypeError: plot_robustness_results() got an unexpected keyword argument 'param_names'
+   Total tests: 18
+   Noise types tested: gaussian, uniform, salt_pepper
+   Noise levels tested: 0%, 1%, 5%, 10%, 20%
+
+--- Missing Data Summary ---
+   Total tests: 6
+   Missing rates tested: 0%, 5%, 10%, 20%, 30%
+
+--- OOD Detection Summary ---
+   OOD rate: 6.50%
+
+================================================================================
+ROBUSTNESS TESTS COMPLETE
+================================================================================
+
+Generated outputs:
+  - outputs/reports/noise_robustness.csv
+  - outputs/reports/ood_detection.csv
+  - outputs/reports/missing_data_robustness.csv
+  - outputs/figures/validation/robustness_tests.png

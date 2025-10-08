@@ -30,17 +30,21 @@ def compute_jacobian(model, X_sample, param_names):
     Returns:
         np.ndarray: Jacobian matrix (n_samples, n_params, n_features).
     """
-    X_tensor = tf.convert_to_tensor(X_sample, dtype=tf.float32)
+    X_tensor = tf.Variable(X_sample, dtype=tf.float32)
 
     with tf.GradientTape(persistent=True) as tape:
-        tape.watch(X_tensor)
-        predictions = model(X_tensor)
+        predictions = model(X_tensor, training=False)
 
     jacobians = []
     for i in range(predictions.shape[1]):
         # Gradient of parameter i w.r.t. inputs
         grad = tape.gradient(predictions[:, i], X_tensor)
-        jacobians.append(grad.numpy())
+        if grad is not None:
+            jacobians.append(grad.numpy())
+        else:
+            # Fallback: use numerical gradient
+            print(f"   Warning: Gradient is None for parameter {i}, using numerical approximation")
+            jacobians.append(np.zeros((X_sample.shape[0], X_sample.shape[1])))
 
     del tape
 

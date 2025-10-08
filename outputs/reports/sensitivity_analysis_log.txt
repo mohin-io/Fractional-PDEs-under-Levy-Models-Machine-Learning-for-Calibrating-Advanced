@@ -1,0 +1,76 @@
+2025-10-08 02:00:36.337303: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2025-10-08 02:00:42.480372: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2025-10-08 02:00:49.017275: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: SSE3 SSE4.1 SSE4.2 AVX AVX2 AVX512F AVX512_VNNI FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+================================================================================
+RUNNING ENHANCED SENSITIVITY ANALYSIS
+================================================================================
+
+1. Loading data...
+2. Loading model and scaler...
+
+3. Computing Jacobian matrix for 100 samples...
+   (This may take a few minutes...)
+   Warning: Gradient is None for parameter 0, using numerical approximation
+   Warning: Gradient is None for parameter 1, using numerical approximation
+   Warning: Gradient is None for parameter 2, using numerical approximation
+   Jacobian shape: (100, 3, 200)
+
+4. Generating Jacobian heatmaps...
+Jacobian heatmap saved to outputs/figures/validation/sensitivity_jacobian_heatmap.png
+
+5. Computing feature importance via permutation...
+Computing permutation importance for 200 features...
+  Feature 20/200
+  Feature 40/200
+  Feature 60/200
+  Feature 80/200
+  Feature 100/200
+  Feature 120/200
+  Feature 140/200
+  Feature 160/200
+  Feature 180/200
+  Feature 200/200
+   Feature importance computed.
+   Saved to: outputs/reports/feature_importance.csv
+
+6. Running perturbation analysis...
+   Saved to: outputs/reports/perturbation_analysis.csv
+
+7. Generating feature importance plot...
+Feature importance plot saved to outputs/figures/validation/feature_importance.png
+
+8. Summary statistics...
+
+--- Average Absolute Jacobian (Top 5 features per parameter) ---
+
+SIGMA:
+  Feature 199: 0.000000
+  Feature 198: 0.000000
+  Feature 197: 0.000000
+  Feature 196: 0.000000
+  Feature 195: 0.000000
+
+NU:
+  Feature 199: 0.000000
+  Feature 198: 0.000000
+  Feature 197: 0.000000
+  Feature 196: 0.000000
+  Feature 195: 0.000000
+
+THETA:
+  Feature 199: 0.000000
+  Feature 198: 0.000000
+  Feature 197: 0.000000
+  Feature 196: 0.000000
+  Feature 195: 0.000000
+
+================================================================================
+SENSITIVITY ANALYSIS COMPLETE
+================================================================================
+
+Generated outputs:
+  - outputs/figures/validation/sensitivity_jacobian_heatmap.png
+  - outputs/figures/validation/feature_importance.png
+  - outputs/reports/feature_importance.csv
+  - outputs/reports/perturbation_analysis.csv
