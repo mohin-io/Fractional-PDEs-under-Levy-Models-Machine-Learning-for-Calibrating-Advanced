@@ -1,0 +1,4 @@
+Parameter,LM Statistic,p-value,Homoscedastic (α=0.05)
+sigma,1063.458991783767,0.0,False
+nu,70.07063865231152,1.1102230246251565e-16,False
+theta,16.087940973722453,6.04678584034124e-05,False

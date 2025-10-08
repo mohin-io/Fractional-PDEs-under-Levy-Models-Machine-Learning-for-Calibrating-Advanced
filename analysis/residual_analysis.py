@@ -15,6 +15,7 @@ import seaborn as sns
 from scipy import stats
 from scipy.stats import shapiro, kstest, normaltest
 import pandas as pd
+import os
 
 
 def compute_residuals(y_true, y_pred):

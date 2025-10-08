@@ -1,0 +1,88 @@
+2025-10-08 01:52:03.477239: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2025-10-08 01:52:11.756128: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2025-10-08 01:52:18.253610: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: SSE3 SSE4.1 SSE4.2 AVX AVX2 AVX512F AVX512_VNNI FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+C:\Users\ACER\AppData\Local\Programs\Python\Python313\Lib\site-packages\scipy\stats\_axis_nan_policy.py:579: UserWarning: scipy.stats.shapiro: For N > 5000, computed p-value may not be accurate. Current N is 20000.
+  res = hypotest_fun_out(*samples, **kwds)
+C:\Users\ACER\AppData\Local\Programs\Python\Python313\Lib\site-packages\scipy\stats\_axis_nan_policy.py:579: UserWarning: scipy.stats.shapiro: For N > 5000, computed p-value may not be accurate. Current N is 20000.
+  res = hypotest_fun_out(*samples, **kwds)
+================================================================================
+RUNNING COMPREHENSIVE RESIDUAL ANALYSIS
+================================================================================
+
+1. Loading data...
+2. Loading model and scaler...
+3. Generating predictions...
+
+4. Running normality tests...
+  Parameter  Shapiro-Wilk Stat  Shapiro-Wilk p-value   KS Stat     KS p-value  D'Agostino Stat  D'Agostino p-value  Normal (α=0.05)
+0     sigma           0.934497          8.870750e-68  0.095866  1.973884e-160      4504.109741                 0.0            False
+1        nu           0.952191          1.878597e-61  0.076145  2.677989e-101      2319.347181                 0.0            False
+2     theta           0.894838          6.885150e-78  0.038682   1.941993e-26      5546.431197                 0.0            False
+
+5. Generating residual diagnostic plots...
+Residual diagnostics saved to outputs/figures/validation/residual_diagnostics.png
+
+6. Generating Q-Q plots...
+
+7. Plotting autocorrelation...
+Autocorrelation plot saved to outputs/figures/validation/residual_autocorrelation.png
+
+8. Testing heteroscedasticity...
+  Parameter  LM Statistic       p-value  Homoscedastic (α=0.05)
+0     sigma   1063.458992  0.000000e+00                   False
+1        nu     70.070639  1.110223e-16                   False
+2     theta     16.087941  6.046786e-05                   False
+
+9. Generating comprehensive diagnostic summary...
+
+================================================================================
+RESIDUAL DIAGNOSTICS SUMMARY
+================================================================================
+
+--- Normality Tests ---
+Parameter  Shapiro-Wilk Stat  Shapiro-Wilk p-value  KS Stat    KS p-value  D'Agostino Stat  D'Agostino p-value  Normal (α=0.05)
+    sigma           0.934497          8.870750e-68 0.095866 1.973884e-160      4504.109741                 0.0            False
+       nu           0.952191          1.878597e-61 0.076145 2.677989e-101      2319.347181                 0.0            False
+    theta           0.894838          6.885150e-78 0.038682  1.941993e-26      5546.431197                 0.0            False
+
+--- Heteroscedasticity Tests (Breusch-Pagan) ---
+Parameter  LM Statistic      p-value  Homoscedastic (α=0.05)
+    sigma   1063.458992 0.000000e+00                   False
+       nu     70.070639 1.110223e-16                   False
+    theta     16.087941 6.046786e-05                   False
+
+--- Residual Summary Statistics ---
+
+sigma:
+  Mean:       0.008285 (should be ≈ 0)
+  Std:        0.015988
+  Min:       -0.140184
+  Max:        0.095267
+  Skewness:  -1.053607 (should be ≈ 0)
+  Kurtosis:   4.294441 (should be ≈ 0 for normal)
+
+nu:
+  Mean:      -0.014738 (should be ≈ 0)
+  Std:        0.022506
+  Min:       -0.077441
+  Max:        0.085510
+  Skewness:   0.899910 (should be ≈ 0)
+  Kurtosis:   0.843036 (should be ≈ 0 for normal)
+
+theta:
+  Mean:      -0.004053 (should be ≈ 0)
+  Std:        0.016984
+  Min:       -0.248527
+  Max:        0.247550
+  Skewness:  -0.360389 (should be ≈ 0)
+  Kurtosis:  22.895372 (should be ≈ 0 for normal)
+
+================================================================================
+RESIDUAL ANALYSIS COMPLETE
+================================================================================
+
+Generated outputs:
+  - outputs/figures/validation/residual_diagnostics.png
+  - outputs/figures/validation/residual_autocorrelation.png
+  - outputs/figures/validation/residual_qq_plot.png
