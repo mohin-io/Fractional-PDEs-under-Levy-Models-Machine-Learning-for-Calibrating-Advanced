@@ -15,7 +15,12 @@
       "Bash(if [ -f \"c:\\Users\\ACER\\Levy Model\\docs\\ARCHITECTURE.md\" ])",
       "Bash(then echo \"exists\")",
       "Bash(else echo \"not exists\")",
-      "Bash(fi)"
+      "Bash(fi)",
+      "Bash(tee:*)",
+      "Bash(mkdir:*)",
+      "Bash(iconv:*)",
+      "Bash(cat:*)",
+      "Bash(timeout:*)"
     ],
     "deny": [],
     "ask": []

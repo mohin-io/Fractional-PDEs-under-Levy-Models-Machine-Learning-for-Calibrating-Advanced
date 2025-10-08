@@ -1,0 +1,62 @@
+2025-10-08 02:24:47.440024: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2025-10-08 02:25:03.533647: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2025-10-08 02:25:18.545300: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: SSE3 SSE4.1 SSE4.2 AVX AVX2 AVX512F AVX512_VNNI FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+================================================================================
+COMPREHENSIVE MODEL COMPARISON
+================================================================================
+
+1. Loading data...
+
+2. Loading trained models...
+   - Loading MLP model...
+   - Loading CNN model...
+   - Loading ResNet model...
+   Loaded 3 models: ['MLP', 'CNN', 'ResNet']
+
+3. Running comprehensive model comparison...
+Evaluating models...
+  - MLP...
+  - CNN...
+  - ResNet...
+
+4. Benchmarking inference speed...
+
+5. Testing robustness to noise...
+
+Testing with 1.0% noise...
+
+Testing with 5.0% noise...
+
+Testing with 10.0% noise...
+
+6. Saving results...
+
+Comparison table saved to outputs/tables/model_comparison.csv
+Traceback (most recent call last):
+  File "C:\Users\ACER\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\compat\_optional.py", line 135, in import_optional_dependency
+    module = importlib.import_module(name)
+  File "C:\Users\ACER\AppData\Local\Programs\Python\Python313\Lib\importlib\__init__.py", line 88, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1324, in _find_and_load_unlocked
+ModuleNotFoundError: No module named 'tabulate'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\ACER\Levy Model\run_model_comparison.py", line 100, in <module>
+    save_comparison_table(comparison_results, 'outputs/tables/model_comparison.csv')
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ACER\Levy Model\analysis\model_comparison.py", line 208, in save_comparison_table
+    f.write(df.to_markdown(index=False))
+            ~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\ACER\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\util\_decorators.py", line 333, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\ACER\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\core\frame.py", line 2988, in to_markdown
+    tabulate = import_optional_dependency("tabulate")
+  File "C:\Users\ACER\AppData\Local\Programs\Python\Python313\Lib\site-packages\pandas\compat\_optional.py", line 138, in import_optional_dependency
+    raise ImportError(msg)
+ImportError: Missing optional dependency 'tabulate'.  Use pip or conda to install tabulate.

@@ -204,9 +204,20 @@ def save_comparison_table(df, output_path='outputs/tables/model_comparison.csv')
 
     # Also save as markdown for GitHub
     md_path = output_path.replace('.csv', '.md')
-    with open(md_path, 'w') as f:
-        f.write(df.to_markdown(index=False))
-    print(f"Markdown table saved to {md_path}")
+    try:
+        with open(md_path, 'w') as f:
+            f.write(df.to_markdown(index=False))
+        print(f"Markdown table saved to {md_path}")
+    except ImportError:
+        # Fallback: create simple markdown table manually
+        with open(md_path, 'w') as f:
+            # Header
+            f.write('| ' + ' | '.join(df.columns) + ' |\n')
+            f.write('| ' + ' | '.join(['---'] * len(df.columns)) + ' |\n')
+            # Rows
+            for _, row in df.iterrows():
+                f.write('| ' + ' | '.join(str(v) for v in row.values) + ' |\n')
+        print(f"Markdown table saved to {md_path} (simple format)")
 
 
 def print_comparison_summary(df):
