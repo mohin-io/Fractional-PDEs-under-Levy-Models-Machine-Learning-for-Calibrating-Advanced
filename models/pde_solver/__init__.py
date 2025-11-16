@@ -10,7 +10,7 @@ Components:
 - discretization: Finite difference schemes for diffusion and jump terms
 
 Author: Mohin Hasin (mohinhasin999@gmail.com)
-Project: Fractional PDEs under Lévy Models
+Project: Fractional PDEs & Lévy Processes: An ML Approach
 Repository: https://github.com/mohin-io/Fractional-PDEs-under-Levy-Models-Machine-Learning-for-Calibrating-Advanced
 """
 

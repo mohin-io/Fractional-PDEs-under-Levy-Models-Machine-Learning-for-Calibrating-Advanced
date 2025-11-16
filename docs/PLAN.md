@@ -1,6 +1,6 @@
-# Project Implementation Plan: Lévy Model Calibration Engine
+# Project Implementation Plan: Fractional PDEs & Lévy Processes
 
-**Project**: Machine Learning for Calibrating Advanced Asset Pricing Models to Market Data
+**Project**: Fractional PDEs & Lévy Processes: An ML Approach
 **Author**: Mohin Hasin (mohin-io)
 **Last Updated**: 2025-10-01
 

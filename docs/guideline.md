@@ -1,4 +1,4 @@
-# Project Guideline: Machine Learning for Calibrating Advanced Asset Pricing Models
+# Project Guideline: Fractional PDEs & Lévy Processes: An ML Approach
 
 ## 1. Executive Summary
 

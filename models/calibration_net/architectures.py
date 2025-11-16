@@ -17,7 +17,7 @@ Given option price surface P(K,T), find parameters θ such that:
 This is an ill-posed inverse problem solved via supervised learning.
 
 Author: Mohin Hasin (mohinhasin999@gmail.com)
-Project: Fractional PDEs under Lévy Models
+Project: Fractional PDEs & Lévy Processes: An ML Approach
 Repository: https://github.com/mohin-io/Fractional-PDEs-under-Levy-Models-Machine-Learning-for-Calibrating-Advanced
 """
 

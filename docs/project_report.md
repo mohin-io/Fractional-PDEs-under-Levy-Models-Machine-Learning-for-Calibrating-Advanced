@@ -1,4 +1,4 @@
-# Professional Project Report: Machine Learning for Calibrating Advanced Asset Pricing Models
+# Professional Project Report: Fractional PDEs & Lévy Processes: An ML Approach
 
 ## 1. Executive Summary
 

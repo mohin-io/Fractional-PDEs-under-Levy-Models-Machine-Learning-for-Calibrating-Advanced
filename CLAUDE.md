@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Name
 
-**Fractional PDEs under Lévy Models: Machine Learning for Calibrating Advanced Asset Pricing Models**
+**Fractional PDEs & Lévy Processes: An ML Approach**
 
 Repository: https://github.com/mohin-io/Fractional-PDEs-under-Levy-Models-Machine-Learning-for-Calibrating-Advanced
 

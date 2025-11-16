@@ -1,5 +1,4 @@
-# 🚀 Fractional PDEs under Lévy Models
-## Machine Learning for Calibrating Advanced Asset Pricing Models
+# 🚀 Fractional PDEs & Lévy Processes: An ML Approach
 
 <p align="center">
   <b>AI-Powered Calibration Engine for Real-World Derivatives Pricing | 1000x Faster | Full Uncertainty Quantification</b>

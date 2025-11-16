@@ -1,6 +1,6 @@
 # Deployment Guide
 
-**Lévy Model Calibration Engine - FastAPI Production Deployment**
+**Fractional PDEs & Lévy Processes: An ML Approach - FastAPI Production Deployment**
 
 Last Updated: 2025-10-08
 
