@@ -1,4 +1,4 @@
-# Project Guideline: Fractional PDEs & Lévy Processes: An ML Approach
+# Project Guideline: Fractional PDEs and Lévy Processes: An ML Approach
 
 ## 1. Executive Summary
 

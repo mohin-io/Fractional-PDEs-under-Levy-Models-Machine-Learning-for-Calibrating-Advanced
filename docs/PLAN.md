@@ -1,6 +1,6 @@
-# Project Implementation Plan: Fractional PDEs & Lévy Processes
+# Project Implementation Plan: Fractional PDEs and Lévy Processes
 
-**Project**: Fractional PDEs & Lévy Processes: An ML Approach
+**Project**: Fractional PDEs and Lévy Processes: An ML Approach
 **Author**: Mohin Hasin (mohin-io)
 **Last Updated**: 2025-10-01
 

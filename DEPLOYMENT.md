@@ -1,6 +1,6 @@
 # Deployment Guide
 
-**Fractional PDEs & Lévy Processes: An ML Approach - FastAPI Production Deployment**
+**Fractional PDEs and Lévy Processes: An ML Approach - FastAPI Production Deployment**
 
 Last Updated: 2025-10-08
 

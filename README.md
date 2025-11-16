@@ -1,4 +1,4 @@
-# 🚀 Fractional PDEs & Lévy Processes: An ML Approach
+# 🚀 Fractional PDEs and Lévy Processes: An ML Approach
 
 <p align="center">
   <b>AI-Powered Calibration Engine for Real-World Derivatives Pricing | 1000x Faster | Full Uncertainty Quantification</b>

@@ -1,4 +1,4 @@
-# Professional Project Report: Fractional PDEs & Lévy Processes: An ML Approach
+# Professional Project Report: Fractional PDEs and Lévy Processes: An ML Approach
 
 ## 1. Executive Summary
 
